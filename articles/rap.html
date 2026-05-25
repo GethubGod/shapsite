@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hits So Hard — Popular Times</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,600&family=Space+Grotesk:wght@400;500;600;700&family=Lobster&family=Pirata+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0e0c0a;
+    --paper: #f3ede1;
+    --paper-2: #ebe3d0;
+    --acid: #ffd400;
+    --red: #b80c09;
+    --rule: rgba(20,17,15,.15);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); overflow-x: hidden; }
+  body {
+    font-family: "Newsreader", Georgia, serif;
+    font-feature-settings: "ss01";
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+
+  /* masthead */
+  .masthead {
+    position: sticky; top: 0; z-index: 50;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 22px 36px 18px;
+    border-bottom: 1px solid var(--ink);
+    background: var(--paper);
+    font-family: "Space Grotesk", "Helvetica Neue", sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .masthead a.home { text-decoration: none; }
+  .masthead .wm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    line-height: 1;
+    gap: 4px;
+  }
+  .masthead .wm img {
+    display: block;
+    height: 56px;
+    width: auto;
+    mix-blend-mode: multiply;
+  }
+  .masthead .wm .motto {
+    font-family: "Newsreader", serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 12px;
+    color: #5a4d3e;
+    text-transform: none;
+    letter-spacing: .005em;
+  }
+  .masthead .right {
+    text-align: right;
+  }
+  @media (max-width: 720px) {
+    .masthead { padding: 14px 18px; grid-template-columns: 1fr; gap: 8px; text-align: center; }
+    .masthead .right { display: none; }
+  }
+  .progress {
+    position: fixed; top: 0; left: 0; height: 3px; background: var(--red); width: 0;
+    z-index: 60; transition: width .1s linear;
+  }
+
+  /* hero */
+  .hero {
+    min-height: 92vh;
+    background: var(--ink);
+    color: var(--paper);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 40px 36px 56px;
+  }
+  .hero .grid-bg {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(to right, rgba(243,237,225,.04) 1px, transparent 1px) 0 0/64px 100%,
+      linear-gradient(to bottom, rgba(243,237,225,.04) 1px, transparent 1px) 0 0/100% 64px;
+    pointer-events: none;
+  }
+  .hero .kicker {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--acid);
+    margin-bottom: 22px;
+    display: flex; gap: 22px; align-items: center;
+  }
+  .hero .kicker .dot { width: 8px; height: 8px; background: var(--red); border-radius: 50%; animation: blink 1.2s infinite; }
+  @keyframes blink { 50% { opacity: .25; } }
+
+  .hero h1 {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(64px, 13vw, 220px);
+    line-height: .82;
+    letter-spacing: -.025em;
+    margin: 0;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 2;
+  }
+  .hero h1 .stroke {
+    -webkit-text-stroke: 2px var(--paper);
+    color: transparent;
+  }
+  .hero h1 em {
+    font-family: "Newsreader", serif;
+    font-style: italic;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: -.01em;
+    color: var(--acid);
+  }
+  .hero .dek {
+    font-size: 19px;
+    line-height: 1.5;
+    max-width: 52ch;
+    margin: 28px 0 0;
+    color: #d8d2c2;
+  }
+  .hero .byline {
+    margin-top: 32px;
+    border-top: 1px solid rgba(243,237,225,.2);
+    padding-top: 14px;
+    display: flex; gap: 36px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #a9a294;
+  }
+  .hero .byline b { color: var(--paper); font-weight: 500; }
+
+  /* hero equalizer along bottom */
+  .eq-strip {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 36%;
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    padding: 0 36px;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .eq-strip .bar {
+    flex: 1;
+    background: var(--paper);
+    opacity: .08;
+    transform-origin: bottom;
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  .eq-strip .bar:nth-child(5n) { background: var(--acid); opacity: .14; }
+  .eq-strip .bar:nth-child(7n) { background: var(--red); opacity: .14; }
+  @keyframes pulse { 0%,100% { transform: scaleY(.18); } 50% { transform: scaleY(1); } }
+
+  /* body wrapper */
+  .body-wrap { max-width: 1100px; margin: 0 auto; padding: 80px 36px 40px; }
+  .body-wrap p {
+    font-size: 21px;
+    line-height: 1.55;
+    max-width: 64ch;
+    margin: 0 auto 26px;
+    text-wrap: pretty;
+  }
+  .body-wrap p:first-of-type::first-letter {
+    font-family: "Archivo Black", sans-serif;
+    float: left;
+    font-size: 96px;
+    line-height: .82;
+    padding: 8px 14px 0 0;
+    color: var(--red);
+  }
+  .body-wrap p .high {
+    background: var(--acid);
+    padding: 0 4px;
+  }
+
+  /* big pull quote between sections */
+  .pull {
+    margin: 50px 0;
+    text-align: center;
+    padding: 60px 28px;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+  .pull .q {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(36px, 6vw, 72px);
+    line-height: .96;
+    letter-spacing: -.02em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+  .pull .q em {
+    font-family: "Newsreader", serif;
+    font-style: italic;
+    font-weight: 500;
+    text-transform: none;
+  }
+
+  /* section labels */
+  .section-label {
+    display: flex; align-items: center; gap: 14px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    margin: 60px auto 18px;
+    max-width: 64ch;
+  }
+  .section-label .line { flex: 1; height: 1px; background: var(--ink); }
+
+  /* ============================================================
+     COMPARATOR — split lyrics, drag the bar to crossfade eras
+  ============================================================ */
+  .compare {
+    margin: 80px 0;
+    padding: 0 36px;
+  }
+  .compare .label {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 18px;
+    color: #5a4d40;
+  }
+  .compare h3 {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: .96;
+    text-transform: uppercase;
+    margin: 0 0 28px;
+    text-align: center;
+    letter-spacing: -.01em;
+  }
+  .comparator {
+    position: relative;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    height: 540px;
+    overflow: hidden;
+    border: 1px solid var(--ink);
+    background: var(--paper-2);
+    user-select: none;
+    cursor: ew-resize;
+  }
+  .side {
+    position: absolute;
+    inset: 0;
+    padding: 56px 60px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .side.then {
+    background: var(--acid);
+    color: var(--ink);
+  }
+  .side.now {
+    background: #1a1714;
+    color: var(--paper);
+    clip-path: inset(0 0 0 50%);
+    align-items: flex-end;
+    text-align: right;
+  }
+  .side.now > div:first-child { width: 100%; text-align: right; }
+  .side.now .lyric { margin-left: auto; }
+  .side.now .foot { width: 100%; }
+  .side .era {
+    font-family: "Archivo Black", sans-serif;
+    font-size: 14px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+  .side .song {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    opacity: .7;
+    margin-top: 4px;
+  }
+  .side .lyric {
+    font-family: "Newsreader", serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(20px, 2.4vw, 30px);
+    line-height: 1.35;
+    max-width: 22ch;
+    margin: 24px 0;
+    text-wrap: balance;
+  }
+  .side .foot {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    display: flex; justify-content: space-between;
+  }
+  .side.now .foot { opacity: .7; }
+
+  .handle {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: var(--red);
+    z-index: 5;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .handle::before {
+    content: ""; position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 56px; height: 56px;
+    background: var(--red);
+    border-radius: 50%;
+    box-shadow: 0 4px 18px rgba(0,0,0,.3);
+  }
+  .handle::after {
+    content: "◀ ▶"; position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--paper);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: .1em;
+    z-index: 2;
+  }
+  .compare .instr {
+    text-align: center;
+    margin-top: 14px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #5a4d40;
+  }
+
+  /* image placeholders (no real images per copyright) */
+  .figgrid {
+    max-width: 1100px;
+    margin: 60px auto;
+    padding: 0 36px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+  .fig {
+    aspect-ratio: 3/4;
+    background: var(--ink);
+    color: var(--paper);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--ink);
+  }
+  .fig .stripe {
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(45deg,
+        rgba(243,237,225,.05) 0 14px,
+        transparent 14px 28px);
+    z-index: 1;
+    pointer-events: none;
+  }
+  .fig img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: #0d0c0a;
+    opacity: 0.85;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .fig:hover img {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+  .fig .label {
+    position: absolute;
+    inset: auto 12px 12px 12px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--paper);
+    line-height: 1.4;
+    z-index: 2;
+    background: rgba(14, 12, 10, 0.75);
+    padding: 8px;
+    border-radius: 2px;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(243, 237, 225, 0.15);
+  }
+  .fig .label b { display: block; color: var(--acid); font-weight: 500; }
+  .fig.acid { background: var(--acid); color: var(--ink); }
+  .fig.acid .label {
+    color: var(--paper);
+    background: rgba(20, 17, 15, 0.85);
+    border: 1px solid rgba(255, 212, 0, 0.2);
+  }
+  .fig.acid .label b { color: var(--acid); }
+  .fig.red { background: var(--red); }
+  .fig.red .label {
+    color: var(--paper);
+    background: rgba(20, 17, 15, 0.85);
+    border: 1px solid rgba(184, 12, 9, 0.2);
+  }
+  .fig.red .label b { color: #ff8a8a; }
+  .fig .marker {
+    position: absolute; top: 12px; left: 12px;
+    font-family: "Archivo Black", sans-serif;
+    font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+    background: var(--paper); color: var(--ink);
+    padding: 4px 7px;
+    z-index: 2;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  /* video player grid */
+  .videogrid {
+    max-width: 1100px;
+    margin: 60px auto;
+    padding: 0 36px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+  .video-card {
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+  }
+  .video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .video-meta {
+    padding: 14px 16px;
+    background: var(--paper-2);
+    color: var(--ink);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    border-top: 1px solid var(--ink);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .video-meta b {
+    display: block;
+    font-family: "Archivo Black", sans-serif;
+    font-size: 12px;
+    margin-bottom: 4px;
+    color: var(--red);
+  }
+  .video-meta.acid b {
+    color: #9c7300;
+  }
+  @media (max-width: 780px) {
+    .videogrid { grid-template-columns: 1fr; }
+  }
+
+  /* stat strip */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    margin: 80px 0 0;
+  }
+  .stats .stat {
+    padding: 40px 28px;
+    border-right: 1px solid var(--ink);
+    background: var(--paper);
+  }
+  .stats .stat:last-child { border-right: 0; }
+  .stats .stat .n {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(48px, 7vw, 96px);
+    line-height: .9;
+    letter-spacing: -.02em;
+  }
+  .stats .stat .l {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-top: 10px;
+  }
+  .stats .stat.acid { background: var(--acid); }
+  .stats .stat.dark { background: var(--ink); color: var(--paper); }
+
+  /* footer */
+  .endcard {
+    padding: 80px 36px;
+    background: var(--ink);
+    color: var(--paper);
+    text-align: center;
+  }
+  .endcard h3 {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(28px, 4vw, 44px);
+    text-transform: uppercase;
+    margin: 0 0 12px;
+    letter-spacing: -.01em;
+  }
+  .endcard a.next {
+    display: inline-block;
+    margin-top: 22px;
+    padding: 16px 24px;
+    background: var(--acid);
+    color: var(--ink);
+    text-decoration: none;
+    font-family: "Archivo Black", sans-serif;
+    font-size: 13px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+  .endcard a.home {
+    display: inline-block;
+    margin-top: 22px; margin-left: 12px;
+    padding: 16px 24px;
+    border: 1px solid var(--paper);
+    text-decoration: none;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--paper);
+  }
+
+  @media (max-width: 780px) {
+    .body-wrap { padding: 50px 22px 30px; }
+    .body-wrap p { font-size: 18px; }
+    .figgrid { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: 1fr; }
+    .stats .stat { border-right: 0; border-bottom: 1px solid var(--ink); }
+    .side { padding: 30px 24px; }
+    .comparator { height: 460px; }
+    .compare { padding: 0 22px; }
+    .hero { padding: 30px 22px 40px; }
+    .eq-strip { padding: 0 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<header class="masthead">
+  <a class="home" href="../index.html">← Index</a>
+  <a class="home wm" href="../index.html" aria-label="Popular Times">
+    <img src="../assets/popular-times-logo.png" alt="Popular Times" />
+    <span class="motto">“The news people want to read.”</span>
+  </a>
+  <span class="right">Nº 01 · Music</span>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="grid-bg"></div>
+  <div class="eq-strip" aria-hidden="true" id="heroEq"></div>
+  <div style="position:relative; z-index:3;">
+    <h1>HITS SO<br/><em>hard.</em><br/><span class="stroke">SO HARD.</span></h1>
+    <p class="dek">A genre that started on a corner block now runs the algorithm. Three decades on, rap is still the loudest argument American music has with itself — and the only one everybody seems to be having.</p>
+    <div class="byline">
+      <span>By <b>The Editors</b></span>
+      <span>5 min</span>
+      <span>Filed under <b>Sound · Culture</b></span>
+    </div>
+  </div>
+</section>
+
+<!-- BODY -->
+<main class="body-wrap">
+
+  <div class="section-label"><span class="line"></span><span>§ I — Roots</span><span class="line"></span></div>
+
+  <p>Since the 1990s, rap music has transformed itself dramatically in order to establish itself as one of the most dominant music genres of our modern day. Rap music of the 1980s and 1990s primarily focused on elements and public criticism. It was symbolized by popular figures such as <span class="high">Tupac Shakur, Eminem,</span> and several others. The rap music executed during this time period included an incorporation of sounds that revealed community struggles and provided a voice to those typically ignored by the media. The efforts would eventually lay the basic foundation for rap music of today's modern times.</p>
+
+  <p>Two of the music genres that were primarily focused on during the 90s were gangster rap and grunge music which were both elements that featured themes of rebellion and raw emotions. Grunge music primarily focused on rock acts such as Nirvana and Pearl Jam who focused on the frustrations that were apparent within those times. In contrast, gangster rap brought perspectives of the frustrations by existing oppression within society. Each of these musical genres would eventually help shape and define the culture of the decade which eventually carries its influence into modern day rap.</p>
+</main>
+
+<!-- PULL QUOTE -->
+<div class="pull">
+  <p class="q">A voice for those <em>typically ignored</em> —<br/>now the loudest one in the room.</p>
+</div>
+
+<main class="body-wrap" style="padding-top:60px;">
+  <div class="section-label"><span class="line"></span><span>§ II — The Pivot</span><span class="line"></span></div>
+
+  <p>Today rap music creates newer and more accessible forms of music. For instance, artists like Kendrick Lamar and Drake have given the genre a newer more diverse perspective that an individual can view rap with. It's currently one of the most dominant music of modern day and it's also intersecting with today's fashion and the fashion industry. The music has developed into a subsection of several new genres, however. Once a niche movement in music, now a universal form of music, one that defines modern pop culture. Therefore, rap remains one of the most influential music genres of today's age and a defining characteristic of the lives of a generation. A side by side analysis of 90s lyrics and more contemporary rap lyrics is as shown:</p>
+</main>
+
+<!-- COMPARATOR -->
+<section class="compare" aria-label="Lyric comparator">
+  <div class="label">Interactive · Drag the line</div>
+  <h3>Two Songs, Thirty-Five Years Apart</h3>
+  <div class="comparator" id="comparator">
+    <div class="side then">
+      <div>
+        <div class="era">Era · 1990</div>
+        <div class="song">U Can't Touch This — MC Hammer</div>
+      </div>
+      <p class="lyric">"My, my, my music hits me so hard<br/>Makes me say, 'Oh my Lord, thank you'<br/>For blessing me with a mind to rhyme and two<br/>Hyped feet"</p>
+      <div class="foot"><span>Tone · Playful</span><span>BPM · 133</span></div>
+    </div>
+    <div class="side now" id="sideNow">
+      <div>
+        <div class="era">Era · 2025</div>
+        <div class="song">RATHER LIE — Playboi Carti &amp; The Weeknd</div>
+      </div>
+      <p class="lyric">"I'd rather lie than to lose you, girl<br/>I'd rather lie than confuse you, girl<br/>Truth is, we lapped them, they want us gone<br/>Truth is, they can't handle me at the top"</p>
+      <div class="foot"><span>Tone · Conflicted</span><span>BPM · 84</span></div>
+    </div>
+    <div class="handle" id="handle"></div>
+  </div>
+  <div class="instr">↔ Drag the divider · then ←  /  → now</div>
+</section>
+
+<main class="body-wrap" style="padding-top:60px;">
+  <p>So, as shown, both of these songs include their own elements of confidence, however, in different ways. In U Can't Touch This by MC Hammer, the tone seems very upbeat and fun. MC Hammer proves to himself and the listeners that he's confident in both his talents and his successes. However, In Rather Lie by Playboi Carti and The Weeknd, the tone is more emotional and apparently conflicted. While there are apparent struggles within the relationships expressed in the song, there is also a sense of confidence from each individual in themselves when expressing themselves despite the struggles that they have been through in their pasts. Hammer takes a more playful and upbeat tone in the lyrics, while Carti and the Weeknd take on a more thoughtful and melodic tone.</p>
+</main>
+
+<!-- IMAGE PLACEHOLDERS -->
+<section class="figgrid">
+  <figure class="fig">
+    <img src="../assets/eminem_vma.jpg" alt="Eminem performing Houdini at the 2024 VMAs" />
+    <div class="stripe"></div>
+    <div class="marker">Plate 01</div>
+    <div class="label"><b>Performance still</b>Eminem performing Houdini at the 2024 VMA's in New York</div>
+  </figure>
+  <figure class="fig acid">
+    <img src="../assets/carti_cover.png" alt="Playboi Carti I AM MUSIC Album Cover" />
+    <div class="stripe"></div>
+    <div class="marker">Plate 02</div>
+    <div class="label"><b>Album cover</b>Playboi Carti's album, "I AM MUSIC" which displays the song "RATHER LIE", collaborating with The Weeknd</div>
+  </figure>
+  <figure class="fig red">
+    <img src="../assets/mc_hammer_cover.jpg" alt="MC Hammer Please Hammer Don't Hurt 'Em Album Cover" />
+    <div class="stripe"></div>
+    <div class="marker">Plate 03</div>
+    <div class="label"><b>Album cover</b>MC HAMMER's album cover of the hit song "U Can't Touch This" with well over 1.5 billion combined streams across all major platforms</div>
+  </figure>
+</section>
+
+<!-- VIDEO EMBEDS -->
+<div class="section-label"><span class="line"></span><span>§ III — Video Archives</span><span class="line"></span></div>
+<section class="videogrid">
+  <div class="video-card">
+    <div class="video-container">
+      <iframe src="https://www.youtube.com/embed/OYYPnBboGao" title="Eminem - Houdini / Somebody Save Me (Live at the 2024 VMAs)" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+    <div class="video-meta">
+      <b>Houdini (VMA Live)</b>
+      Eminem's explosive opening performance at the 2024 MTV Video Music Awards in New York.
+    </div>
+  </div>
+  <div class="video-card">
+    <div class="video-container">
+      <iframe src="https://www.youtube.com/embed/H1VkYwm2k34" title="Playboi Carti & The Weeknd - RATHER LIE (Official Audio)" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+    <div class="video-meta acid">
+      <b>Rather Lie (Official Audio)</b>
+      The melodic, mood-shifting collaboration between Playboi Carti and The Weeknd from the album MUSIC.
+    </div>
+  </div>
+  <div class="video-card">
+    <div class="video-container">
+      <iframe src="https://www.youtube.com/embed/otCpCn0l4Wo" title="MC Hammer - U Can't Touch This (Official Music Video)" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+    <div class="video-meta">
+      <b>U Can't Touch This</b>
+      The Grammy-winning official music video that defined 1990 pop culture with its iconic choreographies.
+    </div>
+  </div>
+</section>
+
+<!-- STAT STRIP -->
+<section class="stats">
+  <div class="stat acid">
+    <div class="n">1.5B+</div>
+    <div class="l">Combined streams · "U Can't Touch This"</div>
+  </div>
+  <div class="stat">
+    <div class="n">35yr</div>
+    <div class="l">Between the two lyrics above</div>
+  </div>
+  <div class="stat dark">
+    <div class="n">#1</div>
+    <div class="l">Most consumed genre in the U.S. since 2017</div>
+  </div>
+</section>
+
+<!-- END / NEXT -->
+<section class="endcard">
+  <h3>Next up · Saturday on Loop</h3>
+  <p style="opacity:.7; font-family: 'JetBrains Mono', monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase;">Nº 02 · John Hughes &amp; the eighties</p>
+  <a class="next" href="hughes.html">Read Nº 02 →</a>
+  <a class="home" href="../index.html">Back to issue</a>
+</section>
+
+<script>
+  // ----- scroll progress -----
+  const prog = document.getElementById('progress');
+  document.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    prog.style.width = pct + '%';
+  });
+
+  // ----- hero equalizer bars (generate) -----
+  const eq = document.getElementById('heroEq');
+  for (let i = 0; i < 80; i++) {
+    const b = document.createElement('div');
+    b.className = 'bar';
+    b.style.animationDelay = (-Math.random() * 1.8) + 's';
+    b.style.animationDuration = (1.2 + Math.random() * 1.2) + 's';
+    eq.appendChild(b);
+  }
+
+  // ----- comparator drag -----
+  (() => {
+    const wrap = document.getElementById('comparator');
+    const now  = document.getElementById('sideNow');
+    const handle = document.getElementById('handle');
+    let drag = false;
+    let pos = 50; // percent
+
+    const set = (px) => {
+      const r = wrap.getBoundingClientRect();
+      let x = ((px - r.left) / r.width) * 100;
+      x = Math.max(4, Math.min(96, x));
+      pos = x;
+      handle.style.left = x + '%';
+      now.style.clipPath = `inset(0 0 0 ${x}%)`;
+    };
+    set(wrap.getBoundingClientRect().left + wrap.getBoundingClientRect().width * 0.5);
+
+    const start = (e) => { drag = true; document.body.style.userSelect = 'none'; };
+    const end   = () => { drag = false; document.body.style.userSelect = ''; };
+    const move  = (e) => {
+      if (!drag) return;
+      const x = e.touches ? e.touches[0].clientX : e.clientX;
+      set(x);
+    };
+    wrap.addEventListener('mousedown', (e) => { start(e); set(e.clientX); });
+    wrap.addEventListener('touchstart', (e) => { start(e); set(e.touches[0].clientX); }, {passive:true});
+    document.addEventListener('mouseup', end);
+    document.addEventListener('touchend', end);
+    document.addEventListener('mousemove', move);
+    document.addEventListener('touchmove', move, {passive:true});
+
+    // arrow keys
+    wrap.tabIndex = 0;
+    wrap.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft')  { pos = Math.max(4,  pos - 4); handle.style.left = pos + '%'; now.style.clipPath = `inset(0 0 0 ${pos}%)`; }
+      if (e.key === 'ArrowRight') { pos = Math.min(96, pos + 4); handle.style.left = pos + '%'; now.style.clipPath = `inset(0 0 0 ${pos}%)`; }
+    });
+  })();
+</script>
+
+</body>
+</html>

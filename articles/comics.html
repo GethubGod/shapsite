@@ -1,0 +1,1421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pulp to Box Office — Popular Times</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,600&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Lobster&family=Pirata+One&family=Bungee&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0908;
+    --paper: #f5efe1;
+    --paper-2: #ebe1c4;
+    --red: #d62828;
+    --red-deep: #8a1014;
+    --yellow: #f2c14e;
+    --blue: #2a6fb1;
+    --rule: rgba(10,9,8,.18);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); overflow-x: hidden; }
+  body {
+    font-family: "Newsreader", Georgia, serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+
+  /* masthead */
+  .masthead {
+    position: sticky; top: 0; z-index: 50;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 22px 36px 18px;
+    border-bottom: 2px solid var(--ink);
+    background: var(--paper);
+    font-family: "Space Grotesk", "Helvetica Neue", sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .masthead .wm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    line-height: 1;
+    gap: 4px;
+  }
+  .masthead .wm img {
+    display: block;
+    height: 56px;
+    width: auto;
+    mix-blend-mode: multiply;
+  }
+  .masthead .wm .motto {
+    font-family: "Newsreader", serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 12px;
+    color: #5a4d3e;
+    text-transform: none;
+    letter-spacing: .005em;
+  }
+  .masthead .right { text-align: right; }
+  .masthead a { text-decoration: none; }
+  .progress {
+    position: fixed; top: 0; left: 0; height: 3px; background: var(--red); width: 0;
+    z-index: 60; transition: width .1s linear;
+  }
+
+  /* ============================================================
+     HERO — comic-cover styled with toggle
+  ============================================================ */
+  .hero {
+    position: relative;
+    padding: 24px 24px 60px;
+    min-height: 88vh;
+    border-bottom: 4px solid var(--ink);
+    transition: background .6s ease, color .6s ease;
+    overflow: hidden;
+  }
+  .hero.campy {
+    background: #ef8a1f;
+  }
+  .hero.gritty {
+    background:
+      radial-gradient(circle at 30% 30%, rgba(214,40,40,.18) 0 40%, transparent 70%),
+      radial-gradient(circle, rgba(245,239,225,.04) 1.5px, transparent 2px) 0 0 / 14px 14px,
+      var(--ink);
+    color: var(--paper);
+  }
+  .hero .top-banner {
+    display: flex; justify-content: space-between; align-items: center;
+    border: 2px solid currentColor;
+    padding: 8px 14px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    background: currentColor;
+  }
+  .hero .top-banner > * { color: var(--paper); }
+  .hero.campy .top-banner > * { color: var(--yellow); }
+  .hero .price {
+    font-family: "Archivo Black", sans-serif;
+    background: currentColor;
+    padding: 2px 8px;
+  }
+  .hero.campy .price { color: var(--red) !important; }
+
+  .cover-grid {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    position: relative;
+  }
+
+  .title-block {
+    text-align: center;
+    padding: 38px 32px 28px;
+    background: var(--cream);
+    border: 4px solid var(--ink);
+    border-radius: 4px;
+    box-shadow: 10px 10px 0 var(--ink);
+    max-width: 960px;
+    margin: 36px auto 0;
+    position: relative;
+    z-index: 3;
+  }
+  .hero.gritty .title-block {
+    background: var(--paper-2);
+    box-shadow: 10px 10px 0 var(--red);
+  }
+  .title-block .dek {
+    color: var(--ink) !important;
+  }
+  .hero.gritty .title-block,
+  .hero.gritty .title-block h1,
+  .hero.gritty .title-block .dek {
+    color: var(--ink) !important;
+  }
+  .hero.gritty .title-block h1 {
+    text-shadow: none !important;
+    -webkit-text-stroke: 0 !important;
+  }
+  .title-block .issue-no {
+    font-family: "Bungee", "Archivo Black", sans-serif;
+    font-size: 16px;
+    letter-spacing: .18em;
+    margin-bottom: 6px;
+  }
+  .title-block h1 {
+    font-family: "Bungee", "Archivo Black", sans-serif;
+    font-size: clamp(64px, 14vw, 220px);
+    line-height: .82;
+    letter-spacing: -.01em;
+    margin: 0;
+    text-transform: uppercase;
+    text-shadow:
+      4px 0 0 var(--ink),
+      0 4px 0 var(--ink),
+      6px 6px 0 var(--red);
+  }
+  .hero.gritty .title-block h1 {
+    text-shadow: none;
+    -webkit-text-stroke: 2px var(--red);
+    color: var(--paper);
+  }
+  .title-block h1 em {
+    font-family: "Newsreader", serif;
+    font-style: italic;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: -.02em;
+    display: block;
+    font-size: .55em;
+    color: var(--ink);
+    text-shadow: none;
+    margin-top: 4px;
+  }
+  .hero.gritty .title-block h1 em { color: var(--paper); -webkit-text-stroke: 0; }
+
+  .title-block .dek {
+    font-size: 20px;
+    line-height: 1.5;
+    max-width: 56ch;
+    margin: 30px auto 0;
+    font-weight: 500;
+    text-wrap: pretty;
+  }
+
+  /* hero panel illustration zone */
+  .panel-zone {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 8px;
+    max-width: 1100px;
+    margin: 30px auto 0;
+    height: 380px;
+  }
+  .pnl {
+    border: 3px solid var(--ink);
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero.gritty .pnl { border-color: var(--paper); background: #1a1715; }
+  .pnl.tall { grid-row: span 2; }
+  .pnl .splash {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Bungee", "Archivo Black", sans-serif;
+    font-size: 56px;
+    color: var(--red);
+    transform: rotate(-6deg);
+    text-shadow: 3px 3px 0 var(--ink);
+  }
+  .hero.gritty .pnl .splash { color: var(--paper); text-shadow: 3px 3px 0 var(--red-deep); }
+  .pnl.halftone-r { background:
+    radial-gradient(circle, var(--red) 1.8px, transparent 2.4px) 0 0 / 8px 8px,
+    var(--yellow);
+  }
+  .hero.gritty .pnl.halftone-r {
+    background:
+      radial-gradient(circle, var(--red) 1.8px, transparent 2.4px) 0 0 / 8px 8px,
+      #1f0f10;
+  }
+  .pnl.halftone-b { background:
+    radial-gradient(circle, var(--blue) 1.8px, transparent 2.4px) 0 0 / 8px 8px,
+    var(--paper);
+  }
+  .hero.gritty .pnl.halftone-b {
+    background:
+      radial-gradient(circle, rgba(42,111,177,.5) 1.8px, transparent 2.4px) 0 0 / 8px 8px,
+      var(--ink);
+  }
+  /* Custom background images for hero panels with blend modes */
+  /* Custom background images for hero panels with blend modes */
+  /* Campy Mode (80s Popular Comics) */
+  .pnl.pnl-c1 {
+    background:
+      radial-gradient(circle, var(--red) 1.8px, transparent 2.4px) 0 0 / 8px 8px,
+      url("../assets/dkr_cover.jpg") center/cover no-repeat;
+    background-blend-mode: multiply;
+  }
+  .pnl.pnl-c2 {
+    background: url("../assets/watchmen_cover.jpg") center/cover no-repeat;
+  }
+  .pnl.pnl-c3 {
+    background:
+      radial-gradient(circle, var(--blue) 1.8px, transparent 2.4px) 0 0 / 8px 8px,
+      url("../assets/killing_joke_cover.jpg") center/cover no-repeat;
+    background-blend-mode: multiply;
+  }
+  .pnl.pnl-c4 {
+    background: url("../assets/crisis_cover.jpg") center/cover no-repeat;
+  }
+  .pnl.pnl-c5 {
+    background:
+      radial-gradient(circle, var(--red) 1.8px, transparent 2.4px) 0 0 / 8px 8px,
+      url("../assets/xmen_cover.jpg") center/cover no-repeat;
+    background-blend-mode: multiply;
+  }
+
+  /* Gritty Mode (90s Dark Grounded Comics) */
+  .hero.gritty .pnl.pnl-c1 {
+    background:
+      radial-gradient(circle, var(--red) 1.8px, transparent 2.4px) 0 0 / 8px 8px,
+      url("../assets/spawn_cover.jpg") center/cover no-repeat;
+    background-blend-mode: multiply;
+    filter: contrast(1.2) brightness(0.9);
+  }
+  .hero.gritty .pnl.pnl-c2 {
+    background: url("../assets/sandman_cover.jpg") center/cover no-repeat;
+    filter: contrast(1.2) brightness(0.9);
+  }
+  .hero.gritty .pnl.pnl-c3 {
+    background:
+      radial-gradient(circle, rgba(42,111,177,.5) 1.8px, transparent 2.4px) 0 0 / 8px 8px,
+      url("../assets/knightfall_cover.jpg") center/cover no-repeat;
+    background-blend-mode: multiply;
+    filter: contrast(1.2) brightness(0.9);
+  }
+  .hero.gritty .pnl.pnl-c4 {
+    background: url("../assets/sincity_cover.jpg") center/cover no-repeat;
+    filter: contrast(1.2) brightness(0.9);
+  }
+  .hero.gritty .pnl.pnl-c5 {
+    background:
+      radial-gradient(circle, var(--red) 1.8px, transparent 2.4px) 0 0 / 8px 8px,
+      url("../assets/preacher_cover.jpg") center/cover no-repeat;
+    background-blend-mode: multiply;
+    filter: contrast(1.2) brightness(0.9);
+  }
+  .pnl .label {
+    position: absolute; bottom: 8px; left: 8px;
+    font-family: "Space Grotesk", "Helvetica Neue", sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 5px 9px;
+    white-space: nowrap;
+    line-height: 1;
+  }
+  .hero.gritty .pnl .label { background: var(--paper); color: var(--ink); }
+
+  /* TOGGLE */
+  .toggle {
+    margin-top: 36px;
+    display: flex; justify-content: center; align-items: center;
+    gap: 0;
+    border: 3px solid var(--ink);
+    background: var(--paper);
+    width: max-content;
+    margin-left: auto; margin-right: auto;
+  }
+  .hero.gritty .toggle { border-color: var(--paper); background: var(--ink); }
+  .toggle button {
+    appearance: none; border: 0; background: transparent;
+    padding: 14px 24px;
+    font-family: "Archivo Black", sans-serif;
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: inherit;
+  }
+  .toggle button.on {
+    background: var(--ink); color: var(--paper);
+  }
+  .hero.gritty .toggle button.on { background: var(--paper); color: var(--ink); }
+  .toggle .div { width: 3px; align-self: stretch; background: var(--ink); }
+  .hero.gritty .toggle .div { background: var(--paper); }
+  .toggle-lbl {
+    text-align: center;
+    margin-top: 12px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    opacity: .8;
+  }
+
+  /* byline */
+  .byline {
+    margin: 40px auto 0;
+    max-width: 760px;
+    border-top: 1px solid currentColor;
+    padding-top: 14px;
+    display: flex; gap: 36px; flex-wrap: wrap;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    justify-content: center;
+  }
+
+  /* ============================================================
+     BODY
+  ============================================================ */
+  .body-wrap { max-width: 1100px; margin: 0 auto; padding: 80px 36px 40px; }
+  .body-wrap p {
+    font-size: 21px;
+    line-height: 1.55;
+    max-width: 64ch;
+    margin: 0 auto 26px;
+    text-wrap: pretty;
+  }
+  .body-wrap p:first-of-type::first-letter {
+    font-family: "Bungee", sans-serif;
+    float: left;
+    font-size: 90px;
+    line-height: .82;
+    padding: 12px 14px 0 0;
+    color: var(--red);
+  }
+  .body-wrap p .mark {
+    background: var(--yellow);
+    padding: 0 4px;
+  }
+
+  /* section label */
+  .section-label {
+    display: flex; align-items: center; gap: 14px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    margin: 60px auto 18px;
+    max-width: 64ch;
+  }
+  .section-label .line { flex: 1; height: 1px; background: var(--ink); }
+
+  /* ============================================================
+     SHOWCASE — two comics, each with cover + text + frames
+  ============================================================ */
+  .showcase {
+    max-width: 1100px;
+    margin: 60px auto;
+    padding: 0 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .showcase .lbl {
+    text-align: center;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--red-deep);
+    margin-bottom: -10px;
+  }
+  .show {
+    border: 4px solid var(--ink);
+    background: var(--paper-2);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .show.dkr { background:
+    radial-gradient(circle, var(--ink) 1.5px, transparent 2px) 0 0/8px 8px,
+    var(--yellow);
+  }
+  .show.wat { background:
+    linear-gradient(135deg, var(--red) 0%, #6c0e0e 100%);
+    color: var(--paper);
+  }
+  .show .top {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 0;
+    align-items: stretch;
+  }
+  .show.wat .top { grid-template-columns: 1fr 280px; }
+  .show .cover {
+    background: var(--ink);
+    color: var(--paper);
+    aspect-ratio: 2/3;
+    position: relative;
+    overflow: hidden;
+    border-right: 4px solid var(--ink);
+  }
+  .show .cover img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+  }
+  .show .cover:hover img {
+    opacity: 1;
+  }
+  .show.wat .cover {
+    order: 2;
+    border-right: 0;
+    border-left: 4px solid var(--ink);
+  }
+  .show .cover .ph {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background:
+      repeating-linear-gradient(45deg, rgba(255,255,255,.04) 0 14px, transparent 14px 28px),
+      var(--ink);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    text-align: center;
+    color: rgba(245,239,225,.65);
+    gap: 4px;
+  }
+  .show .cover .ph .lg {
+    font-family: "Bungee", "Archivo Black", sans-serif;
+    font-size: 14px;
+    color: var(--paper);
+    line-height: 1.1;
+    padding: 0 12px;
+  }
+  .show.dkr .cover .ph {
+    background:
+      repeating-linear-gradient(45deg, rgba(0,0,0,.06) 0 14px, transparent 14px 28px),
+      #1b1a18;
+  }
+  .show .text {
+    padding: 32px 32px 30px;
+    position: relative;
+    background: #f8f0d8;
+    color: var(--ink);
+  }
+  .show.wat .text {
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .show .tag {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .show h3 {
+    font-family: "Bungee", "Archivo Black", sans-serif;
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: .95;
+    margin: 0 0 14px;
+    letter-spacing: -.01em;
+  }
+  .show .body {
+    font-size: 16.5px;
+    line-height: 1.5;
+  }
+  .show .year-badge {
+    position: absolute;
+    top: -2px; right: -2px;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 8px 12px;
+    font-family: "Archivo Black", sans-serif;
+    font-size: 14px;
+    letter-spacing: .14em;
+    z-index: 2;
+  }
+  .show .frames {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    padding: 4px;
+    background: var(--ink);
+    border-top: 4px solid var(--ink);
+  }
+  .show .frame {
+    aspect-ratio: 4/3;
+    position: relative;
+    overflow: hidden;
+    background: var(--paper);
+    display: flex; align-items: flex-end; justify-content: flex-start;
+    transition: transform 0.3s ease, filter 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+  .show .frame:hover {
+    transform: scale(1.03);
+    z-index: 5;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    filter: none !important;
+  }
+  .show.dkr .frame:nth-child(1) {
+    background: url("../assets/dkr_gotham.png") center/cover no-repeat;
+  }
+  .show.dkr .frame:nth-child(2) {
+    background: url("../assets/dkr_return.png") center/cover no-repeat;
+  }
+  .show.dkr .frame:nth-child(3) {
+    background: url("../assets/dkr_news.png") center/cover no-repeat;
+  }
+  .show.dkr .frame:nth-child(4) {
+    background: url("../assets/dkr_fear.png") center/cover no-repeat;
+  }
+  .show.wat .frame { background: var(--paper-2); color: var(--ink); }
+  .show.wat .frame:nth-child(1) {
+    background: url("../assets/watchmen_smiley.png") center/cover no-repeat;
+  }
+  .show.wat .frame:nth-child(2) {
+    background: url("../assets/watchmen_manhattan.png") center/cover no-repeat;
+  }
+  .show.wat .frame:nth-child(3) {
+    background: url("../assets/watchmen_clock.png") center/cover no-repeat;
+  }
+  .show.wat .frame:nth-child(4) {
+    background: url("../assets/watchmen_vigilantes.png") center/cover no-repeat;
+  }
+  .show .frame .cap {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 9px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    background: var(--paper);
+    color: var(--ink);
+    padding: 3px 6px;
+    margin: 8px;
+    position: relative;
+    z-index: 2;
+  }
+  @media (max-width: 780px) {
+    .show .top { grid-template-columns: 1fr !important; }
+    .show.wat .cover { order: 0; border-left: 0; border-bottom: 4px solid var(--ink); }
+    .show .cover { border-right: 0; border-bottom: 4px solid var(--ink); aspect-ratio: 4/3; }
+    .show .frames { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ============================================================
+     MCU MOMENTS SHOWCASE
+  ============================================================ */
+  .mcu {
+    padding: 80px 36px;
+    background: var(--paper-2);
+    border-bottom: 4px solid var(--ink);
+  }
+  .mcu .inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .mcu .lbl {
+    text-align: center;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--red-deep);
+    margin-bottom: 12px;
+  }
+  .mcu h2 {
+    text-align: center;
+    font-family: "Bungee", "Archivo Black", sans-serif;
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: .95;
+    margin: 0 0 14px;
+    letter-spacing: -.01em;
+  }
+  .mcu h2 em {
+    font-family: "Newsreader", serif;
+    font-style: italic;
+    font-weight: 500;
+    text-transform: none;
+    color: var(--red);
+  }
+  .mcu .lede {
+    text-align: center;
+    max-width: 60ch;
+    margin: 0 auto 40px;
+    font-size: 17px;
+    line-height: 1.5;
+  }
+  .mcu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 36px;
+  }
+  .mcu-card {
+    background: var(--paper);
+    border: 3px solid var(--ink);
+    overflow: hidden;
+    position: relative;
+    display: flex; flex-direction: column;
+    transition: transform .2s ease, box-shadow .2s;
+  }
+  .mcu-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+  .mcu-card .poster {
+    aspect-ratio: 3/2;
+    position: relative;
+    overflow: hidden;
+    color: var(--paper);
+    display: flex; align-items: flex-end; justify-content: flex-start;
+    padding: 14px;
+    border-bottom: 3px solid var(--ink);
+    background-size: cover;
+    background-position: center;
+  }
+  .mcu-card .poster .yr {
+    font-family: "Bungee", sans-serif;
+    font-size: 28px;
+    line-height: 1;
+    z-index: 2;
+    text-shadow: 2px 2px 0 rgba(0,0,0,.4);
+  }
+  .mcu-card .poster .badge {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Archivo Black", sans-serif;
+    font-size: 10px;
+    letter-spacing: .12em;
+    padding: 4px 7px;
+    z-index: 2;
+  }
+  .mcu-card.iron .poster {
+    background-image: url("../assets/iron_man_poster.jpg");
+  }
+  .mcu-card.avg .poster {
+    background-image: url("../assets/the_avengers_poster.jpg");
+  }
+  .mcu-card.bp .poster {
+    background-image: url("../assets/black_panther_poster.jpg");
+  }
+  .mcu-card.iw .poster {
+    background-image: url("../assets/infinity_war_poster.jpg");
+  }
+  .mcu-card.end .poster {
+    background-image: url("../assets/endgame_poster.jpg");
+  }
+  .mcu-card.nwh .poster {
+    background-image: url("../assets/no_way_home_poster.jpg");
+  }
+  .mcu-card .meta {
+    padding: 16px 16px 18px;
+    flex: 1;
+    display: flex; flex-direction: column;
+  }
+  .mcu-card .ttl {
+    font-family: "Bungee", "Archivo Black", sans-serif;
+    font-size: 17px;
+    line-height: 1.05;
+    text-transform: uppercase;
+    letter-spacing: -.005em;
+    margin: 0 0 6px;
+  }
+  .mcu-card .blurb {
+    font-size: 14.5px;
+    line-height: 1.45;
+    color: #2a1a18;
+    margin: 0;
+  }
+  .impact {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 32px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 30px;
+    align-items: start;
+    border: 3px solid var(--ink);
+  }
+  .impact h3 {
+    font-family: "Bungee", "Archivo Black", sans-serif;
+    font-size: 28px;
+    line-height: .95;
+    margin: 0;
+    color: var(--yellow);
+  }
+  .impact h3 em {
+    font-family: "Newsreader", serif;
+    font-style: italic;
+    font-weight: 500;
+    text-transform: none;
+    color: var(--paper);
+  }
+  .impact ul {
+    list-style: none;
+    margin: 0; padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 30px;
+  }
+  .impact li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 14.5px;
+    line-height: 1.45;
+    border-top: 1px solid rgba(245,239,225,.2);
+    padding-top: 12px;
+  }
+  .impact li::before {
+    content: "✦";
+    color: var(--red);
+    font-size: 14px;
+    line-height: 1.5;
+    flex-shrink: 0;
+  }
+  .impact li b {
+    color: var(--yellow);
+    font-weight: 500;
+    font-family: "JetBrains Mono", monospace;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: .12em;
+    display: block;
+    margin-bottom: 2px;
+  }
+  @media (max-width: 900px) {
+    .mcu-grid { grid-template-columns: 1fr 1fr; }
+    .impact { grid-template-columns: 1fr; }
+    .impact ul { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .mcu-grid { grid-template-columns: 1fr; }
+  }
+  .boxoffice {
+    background:
+      repeating-linear-gradient(0deg, rgba(245,239,225,.05) 0 1px, transparent 1px 3px),
+      var(--ink);
+    color: var(--paper);
+    margin: 60px 0 0;
+    padding: 0;
+    border-top: 4px solid var(--red);
+    border-bottom: 4px solid var(--red);
+    position: relative;
+  }
+  .boxoffice .ticket-strip {
+    height: 18px;
+    background:
+      radial-gradient(circle at 50% 0, var(--paper) 0 9px, transparent 9px) 0 0/24px 18px,
+      var(--red);
+    opacity: .85;
+  }
+  .boxoffice .ticket-strip.bot {
+    background:
+      radial-gradient(circle at 50% 18px, var(--paper) 0 9px, transparent 9px) 0 0/24px 18px,
+      var(--red);
+  }
+  .boxoffice .inner {
+    padding: 50px 36px 54px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .boxoffice .header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-bottom: 1px dashed rgba(245,239,225,.3);
+    padding-bottom: 14px;
+    margin-bottom: 30px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    flex-wrap: wrap; gap: 8px;
+  }
+  .boxoffice .header .stamp {
+    color: var(--red);
+    font-family: "Bungee", sans-serif;
+    font-size: 14px;
+    border: 2px solid var(--red);
+    padding: 4px 10px;
+    transform: rotate(-3deg);
+  }
+  .boxoffice h2 {
+    font-family: "Bungee", "Archivo Black", sans-serif;
+    font-size: clamp(40px, 6vw, 78px);
+    line-height: .9;
+    margin: 0 0 8px;
+    letter-spacing: -.01em;
+  }
+  .boxoffice h2 em {
+    font-family: "Newsreader", serif;
+    font-style: italic;
+    font-weight: 500;
+    text-transform: none;
+    color: var(--yellow);
+  }
+  .boxoffice .sub {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: rgba(245,239,225,.7);
+    margin-bottom: 36px;
+  }
+  .bo-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 36px;
+    align-items: stretch;
+  }
+  .bo-hero {
+    background: rgba(245,239,225,.04);
+    border: 1px solid rgba(245,239,225,.2);
+    padding: 30px;
+    position: relative;
+  }
+  .bo-hero .big {
+    font-family: "Bungee", sans-serif;
+    font-size: clamp(72px, 10vw, 140px);
+    color: var(--yellow);
+    line-height: .9;
+    letter-spacing: -.02em;
+  }
+  .bo-hero .big .pre { color: var(--red); }
+  .bo-hero .lbl {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    margin-top: 14px;
+    color: rgba(245,239,225,.75);
+    max-width: 36ch;
+    line-height: 1.5;
+  }
+  .bo-hero .title {
+    font-family: "Bungee", sans-serif;
+    font-size: 22px;
+    color: var(--paper);
+    margin: 4px 0 0;
+  }
+  .bo-side {
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    gap: 4px;
+  }
+  .bo-row {
+    background: rgba(245,239,225,.04);
+    border: 1px solid rgba(245,239,225,.2);
+    padding: 18px 22px;
+    display: flex; align-items: center; justify-content: space-between; gap: 18px;
+  }
+  .bo-row .l {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: rgba(245,239,225,.7);
+    max-width: 22ch;
+    line-height: 1.4;
+  }
+  .bo-row .r {
+    font-family: "Bungee", sans-serif;
+    font-size: 28px;
+    color: var(--yellow);
+    line-height: 1;
+    text-align: right;
+  }
+  .bo-row .r .pre { color: var(--red); font-size: .7em; }
+
+  /* opening-weekend bar chart */
+  .bo-bars {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px dashed rgba(245,239,225,.3);
+  }
+  .bo-bars .ttl {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: rgba(245,239,225,.7);
+    margin-bottom: 14px;
+  }
+  .bar-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 80px;
+    align-items: center;
+    gap: 14px;
+    padding: 6px 0;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+  }
+  .bar-row .name { color: rgba(245,239,225,.85); letter-spacing: .04em; text-transform: uppercase; }
+  .bar-row .name b { color: var(--paper); font-weight: 500; }
+  .bar-row .bar {
+    height: 18px;
+    background: rgba(245,239,225,.06);
+    position: relative;
+    display: block;
+    overflow: hidden;
+  }
+  .bar-row .bar .fill {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--red), var(--yellow));
+  }
+  .bar-row.feature .fill { background: linear-gradient(90deg, var(--yellow), #fff2a8); }
+  .bar-row .v { color: var(--yellow); font-family: "Bungee", sans-serif; text-align: right; font-size: 14px; }
+  @media (max-width: 780px) {
+    .bo-grid { grid-template-columns: 1fr; }
+    .bar-row { grid-template-columns: 110px 1fr 60px; }
+  }
+  .stats {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 60px 36px;
+    margin: 60px 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    text-align: center;
+    border-top: 4px solid var(--red);
+    border-bottom: 4px solid var(--red);
+  }
+  .stats .stat .n {
+    font-family: "Bungee", sans-serif;
+    font-size: clamp(56px, 8vw, 110px);
+    line-height: .9;
+    color: var(--yellow);
+    letter-spacing: -.02em;
+  }
+  .stats .stat .n .pre { color: var(--red); }
+  .stats .stat .l {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    margin-top: 14px;
+    line-height: 1.4;
+    max-width: 22ch;
+    margin-left: auto; margin-right: auto;
+  }
+
+  /* speech bubble pull */
+  .bubble-wrap {
+    padding: 80px 36px;
+    background: var(--paper-2);
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+  .bubble {
+    position: relative;
+    background: var(--paper);
+    border: 4px solid var(--ink);
+    border-radius: 30px;
+    padding: 36px 44px;
+    max-width: 720px;
+    font-family: "Newsreader", serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(22px, 3.4vw, 36px);
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+  .bubble::before, .bubble::after {
+    content: "";
+    position: absolute;
+    bottom: -28px;
+    left: 60px;
+    width: 0; height: 0;
+    border: 18px solid transparent;
+    border-top-color: var(--ink);
+  }
+  .bubble::after {
+    bottom: -20px;
+    left: 66px;
+    border-top-color: var(--paper);
+    border-width: 14px;
+  }
+  .bubble .acc {
+    background: var(--yellow);
+    padding: 0 6px;
+    font-style: normal;
+    font-family: "Archivo Black", sans-serif;
+    text-transform: uppercase;
+    font-size: .75em;
+  }
+
+  /* end card */
+  .endcard {
+    padding: 80px 36px;
+    background: var(--red);
+    color: var(--paper);
+    text-align: center;
+    border-top: 4px solid var(--ink);
+  }
+  .endcard h3 {
+    font-family: "Bungee", "Archivo Black", sans-serif;
+    font-size: clamp(28px, 4vw, 44px);
+    text-transform: uppercase;
+    margin: 0 0 12px;
+    letter-spacing: -.01em;
+  }
+  .endcard a.next {
+    display: inline-block;
+    margin-top: 22px;
+    padding: 16px 24px;
+    background: var(--ink);
+    color: var(--yellow);
+    text-decoration: none;
+    font-family: "Archivo Black", sans-serif;
+    font-size: 13px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+  .endcard a.home {
+    display: inline-block;
+    margin-top: 22px; margin-left: 12px;
+    padding: 16px 24px;
+    border: 2px solid var(--paper);
+    text-decoration: none;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--paper);
+  }
+
+  @media (max-width: 900px) {
+    .panel-zone { grid-template-columns: 1fr 1fr; height: auto; }
+    .pnl { aspect-ratio: 1/1; }
+    .pnl.tall { grid-row: auto; }
+    .vs { grid-template-columns: 1fr; }
+    .vs .divider { padding: 14px; border-left: 4px solid var(--ink); border-right: 4px solid var(--ink); }
+    .stats { grid-template-columns: 1fr; }
+    .body-wrap { padding: 50px 22px 30px; }
+    .body-wrap p { font-size: 18px; }
+    .hero { padding: 16px 16px 40px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<header class="masthead">
+  <a href="../index.html">← Index</a>
+  <a class="wm" href="../index.html" aria-label="Popular Times">
+    <img src="../assets/popular-times-logo.png" alt="Popular Times" />
+    <span class="motto">“The news people want to read.”</span>
+  </a>
+  <span class="right">Nº 03 · Pulp · Screen</span>
+</header>
+
+<!-- HERO -->
+<section class="hero campy" id="hero">
+  <div class="title-block">
+    <h1>FROM COMICS<br/><em>to film.</em></h1>
+    <p class="dek">In 1986 two comics turned a kid's genre into the adult section, and it took Hollywood twenty years to catch up.</p>
+  </div>
+
+  <!-- panel zone -->
+  <div class="panel-zone" aria-hidden="true">
+    <div class="pnl tall halftone-r pnl-c1">
+      <div class="splash">KRAKK!</div>
+      <span class="label">Plate · 01</span>
+    </div>
+    <div class="pnl pnl-c2">
+      <div class="splash" style="font-size:36px;">BAM</div>
+      <span class="label">Plate · 02</span>
+    </div>
+    <div class="pnl halftone-b pnl-c3">
+      <div class="splash" style="font-size:36px; color: var(--blue); -webkit-text-stroke: 0;">WHIFF</div>
+      <span class="label">Plate · 03</span>
+    </div>
+    <div class="pnl pnl-c4">
+      <div class="splash" style="font-size:30px;">POW!!</div>
+      <span class="label">Plate · 04</span>
+    </div>
+    <div class="pnl halftone-r pnl-c5">
+      <div class="splash" style="font-size:30px; color: var(--ink);">THWIP</div>
+      <span class="label">Plate · 05</span>
+    </div>
+  </div>
+
+  <!-- toggle -->
+  <div class="toggle" role="tablist">
+    <button id="btn-campy" class="on" type="button">★ Campy</button>
+    <div class="div"></div>
+    <button id="btn-gritty" type="button">▲ Gritty</button>
+  </div>
+  <div class="toggle-lbl">Toggle the era · the page changes with you</div>
+
+  <div class="byline">
+    <span>By The Editors</span>
+    <span>3 min read</span>
+    <span>Filed · Page &amp; Screen</span>
+  </div>
+</section>
+
+<!-- BODY -->
+<main class="body-wrap">
+  <div class="section-label"><span class="line"></span><span>§ I — A Kids' Genre</span><span class="line"></span></div>
+
+  <p>Comic books prior to the 90s focused primarily on kid-friendly topics that followed straightforward plotlines of good and evil, with occasional references to deeper themes. Of course, this made it extremely popular among younger audiences, and to the older demographic, it was seen as disposable, low-quality media. All of this changed in 1986 with the release of <span class="mark">The Dark Knight Returns</span> and <span class="mark">Watchmen</span>. These two comics completely revolutionized the comic industry by captivating the adult audience.</p>
+</main>
+
+<!-- SHOWCASE: How both comics revolutionized -->
+<section class="showcase">
+  <div class="lbl">Two books, one revolution · 1986</div>
+
+  <article class="show dkr">
+    <span class="year-badge">1986</span>
+    <div class="top">
+      <div class="cover">
+        <img src="../assets/dkr_cover.jpg" alt="The Dark Knight Returns Comic Cover by Frank Miller" />
+      </div>
+      <div class="text">
+        <div class="tag">Frank Miller · DC</div>
+        <h3>The Dark Knight Returns</h3>
+        <p class="body">Frank Miller's Dark Knight Returns replaced the child centric tones with a mature story leaning into the realities of being a superhero, telling the story of a Batman returning to save the dystopian, crime-ridden Gotham. Continuing the realism, the comic explored real world issues of cold war nuclear fears, sensationalized media with 24 hour news, and the growing distrust in the government.</p>
+      </div>
+    </div>
+    <div class="frames">
+      <div class="frame"><span class="cap">Frame · Gotham</span></div>
+      <div class="frame"><span class="cap">Frame · The Return</span></div>
+      <div class="frame"><span class="cap">Frame · 24-hr news</span></div>
+      <div class="frame"><span class="cap">Frame · Cold-war fear</span></div>
+    </div>
+  </article>
+
+  <article class="show wat">
+    <span class="year-badge">1986</span>
+    <div class="top">
+      <div class="cover">
+        <img src="../assets/watchmen_cover.jpg" alt="Watchmen Comic Cover by Dave Gibbons" />
+      </div>
+      <div class="text">
+        <div class="tag">Moore · Gibbons · DC</div>
+        <h3>Watchmen</h3>
+        <p class="body">The Watchmen chose to deconstruct superheroes, emphasizing their human flaws and posing the moral dilemma of choosing the cost of choosing the greater good. It explored similar issues of mutually assured nuclear destruction, corruption in the government, and the question of whether vigilante actions were effective.</p>
+      </div>
+    </div>
+    <div class="frames">
+      <div class="frame"><span class="cap">Frame · Smiley</span></div>
+      <div class="frame"><span class="cap">Frame · Dr. Manhattan</span></div>
+      <div class="frame"><span class="cap">Frame · Doomsday clock</span></div>
+      <div class="frame"><span class="cap">Frame · Vigilantes</span></div>
+    </div>
+  </article>
+</section>
+
+<main class="body-wrap" style="padding-top:30px;">
+  <p>Together, these stories grounded superheroes under a plausible reality that brought real-world issues into the minds of comic readers, bringing the era of graphic novels and grim and gritty comics.</p>
+</main>
+
+<!-- SPEECH BUBBLE PULL -->
+<section class="bubble-wrap">
+  <div class="bubble">
+    <span class="acc">A KIDS' GENRE</span><br/>
+    <em>completely revolutionized</em> in a single year — by two books that decided to take their readers seriously.
+  </div>
+</section>
+
+<!-- BODY § II -->
+<main class="body-wrap">
+  <div class="section-label"><span class="line"></span><span>§ II — Page Becomes Screen</span><span class="line"></span></div>
+
+  <p>Comic book adaptations have always coexisted with their source materials, but it wasn't until the early 2000s that they became mainstream. In the 80s and 90s, comic book adaptations consisted of child-centric movies such as Tim Burton's Batman and Superman, which focused on a goofy and hopeful tone that had a campy feel similar to the comic books of the same time period. Like their comic book counterparts, they were niche and were mainly appealing to the younger demographic.</p>
+
+  <p>As time went on, technological improvements brought us modern CGI technology, allowing directors to tell more complex and bigger stories. This brought a new wave of realistic superhero movies, first with Spiderman and X-Men that chose to incorporate value emotional complexity over the campy feel. Following the events of 9/11, a cultural shift emerged that desired more realistic and emotionally complex cinema. <span class="mark">Christopher Nolan's Dark Knight Trilogy</span> was the first to do it successfully. The film had broke all time records, becoming the 4th highest grossing film of all time.</p>
+</main>
+
+<!-- 2008 BOX OFFICE SNAPSHOT -->
+<section class="boxoffice">
+  <div class="ticket-strip"></div>
+  <div class="inner">
+    <div class="header">
+      <span>Box Office Report · Domestic + Worldwide</span>
+      <span class="stamp">2008</span>
+    </div>
+    <h2>The Dark Knight, <em>printed</em> money.</h2>
+
+    <div class="bo-grid">
+      <div class="bo-hero">
+        <div class="big"><span class="pre">$</span>1.005<span style="font-size:.5em">B</span></div>
+        <div class="title">The Dark Knight</div>
+        <div class="lbl">Worldwide gross — the first comic-book adaptation to clear the billion-dollar mark, and the highest-grossing film of 2008.</div>
+      </div>
+      <div class="bo-side">
+        <div class="bo-row">
+          <div class="l">Opening weekend · Domestic</div>
+          <div class="r"><span class="pre">$</span>158<span style="font-size:.6em">M</span></div>
+        </div>
+        <div class="bo-row">
+          <div class="l">Domestic total</div>
+          <div class="r"><span class="pre">$</span>534<span style="font-size:.6em">M</span></div>
+        </div>
+        <div class="bo-row">
+          <div class="l">Posthumous Oscar · Heath Ledger · Supporting Actor</div>
+          <div class="r">★</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bo-bars">
+      <div class="ttl">2008 · Top of the worldwide chart</div>
+      <div class="bar-row feature">
+        <span class="name"><b>1 · The Dark Knight</b></span>
+        <span class="bar"><span class="fill" style="width:100%"></span></span>
+        <span class="v">$1.0B</span>
+      </div>
+      <div class="bar-row">
+        <span class="name">2 · Indiana Jones & the Crystal Skull</span>
+        <span class="bar"><span class="fill" style="width:79%"></span></span>
+        <span class="v">$790M</span>
+      </div>
+      <div class="bar-row">
+        <span class="name">3 · Kung Fu Panda</span>
+        <span class="bar"><span class="fill" style="width:63%"></span></span>
+        <span class="v">$632M</span>
+      </div>
+      <div class="bar-row">
+        <span class="name">4 · Hancock</span>
+        <span class="bar"><span class="fill" style="width:62%"></span></span>
+        <span class="v">$624M</span>
+      </div>
+      <div class="bar-row">
+        <span class="name">5 · Mamma Mia!</span>
+        <span class="bar"><span class="fill" style="width:61%"></span></span>
+        <span class="v">$610M</span>
+      </div>
+    </div>
+  </div>
+  <div class="ticket-strip bot"></div>
+</section>
+
+<main class="body-wrap" style="padding-top:60px;">
+  <p>By choosing to remove the cartoonish elements, Nolan placed Batman in a gritty world with real world dilemmas which mirrored the revolution that The Dark Knight Returns and Watchmen had brought to comic books. Now superhero movies have become a multi billion dollar industry that dominates film and cultures around us. We can see this through the Marvel Cinematic Universe, known for movies such as Iron Man and Avengers Endgame, consisting of interconnected movies and tv shows spanning 18 years and made over $31 billion at the global box office.</p>
+</main>
+
+<!-- MCU MOMENTS SHOWCASE -->
+<section class="mcu">
+  <div class="inner">
+    <div class="lbl">After the snap · Notable Marvel Cinematic Universe entries</div>
+    <h2>Phase after phase, <em>era after era.</em></h2>
+
+    <div class="mcu-grid">
+      <article class="mcu-card iron">
+        <div class="poster"><span class="badge">Phase 1</span><span class="yr">2008</span></div>
+        <div class="meta">
+          <p class="ttl">Iron Man</p>
+          <p class="blurb">Robert Downey Jr.'s comeback opens the doors. A post-credits Nick Fury tease, and the whole interconnected idea is set in motion.</p>
+        </div>
+      </article>
+      <article class="mcu-card avg">
+        <div class="poster"><span class="badge">Phase 1 Finale</span><span class="yr">2012</span></div>
+        <div class="meta">
+          <p class="ttl">The Avengers</p>
+          <p class="blurb">The first team-up. Proves the connected-universe gamble pays. Studios spend the next decade trying to replicate the trick.</p>
+        </div>
+      </article>
+      <article class="mcu-card bp">
+        <div class="poster"><span class="badge">Cultural Milestone</span><span class="yr">2018</span></div>
+        <div class="meta">
+          <p class="ttl">Black Panther</p>
+          <p class="blurb">A cultural phenomenon. The first Marvel film to win Academy Awards. Wakanda enters the lexicon.</p>
+        </div>
+      </article>
+      <article class="mcu-card iw">
+        <div class="poster"><span class="badge">The Snap</span><span class="yr">2018</span></div>
+        <div class="meta">
+          <p class="ttl">Avengers: Infinity War</p>
+          <p class="blurb">A villain wins. The cliffhanger heard around the world. A year of fan theories follows.</p>
+        </div>
+      </article>
+      <article class="mcu-card end">
+        <div class="poster"><span class="badge">Highest Grossing</span><span class="yr">2019</span></div>
+        <div class="meta">
+          <p class="ttl">Avengers: Endgame</p>
+          <p class="blurb">Briefly the highest-grossing film of all time. Eleven years of setups paid off in three hours.</p>
+        </div>
+      </article>
+      <article class="mcu-card nwh">
+        <div class="poster"><span class="badge">Multiverse</span><span class="yr">2021</span></div>
+        <div class="meta">
+          <p class="ttl">Spider-Man: No Way Home</p>
+          <p class="blurb">Three generations of Spider-Men on one screen. Pandemic-era release that pulled audiences back to theaters.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="stat">
+    <div class="n"><span class="pre">#</span>4</div>
+    <div class="l">Dark Knight Trilogy entry — among the highest grossing films of all time</div>
+  </div>
+  <div class="stat">
+    <div class="n">18<span style="font-size:.5em">yr</span></div>
+    <div class="l">Span of the interconnected MCU at the global box office</div>
+  </div>
+  <div class="stat">
+    <div class="n"><span class="pre">$</span>31<span style="font-size:.5em">B</span></div>
+    <div class="l">Combined global gross of the Marvel Cinematic Universe</div>
+  </div>
+</section>
+
+<!-- END / NEXT -->
+<section class="endcard">
+  <h3>That's a wrap on Issue 014</h3>
+  <p style="opacity:.85; font-family: 'JetBrains Mono', monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase;">Read again, or pick another piece from the issue</p>
+  <a class="next" href="rap.html">← Nº 01 · Hits So Hard</a>
+  <a class="home" href="../index.html">Back to issue</a>
+</section>
+
+<script>
+  // scroll progress
+  const prog = document.getElementById('progress');
+  document.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    prog.style.width = pct + '%';
+  });
+
+  // campy / gritty toggle
+  const hero = document.getElementById('hero');
+  const c = document.getElementById('btn-campy');
+  const g = document.getElementById('btn-gritty');
+  const setMode = (mode) => {
+    if (mode === 'gritty') {
+      hero.classList.remove('campy');
+      hero.classList.add('gritty');
+      g.classList.add('on'); c.classList.remove('on');
+    } else {
+      hero.classList.remove('gritty');
+      hero.classList.add('campy');
+      c.classList.add('on'); g.classList.remove('on');
+    }
+  };
+  c.addEventListener('click', () => setMode('campy'));
+  g.addEventListener('click', () => setMode('gritty'));
+
+  // auto-switch as user scrolls past the panel zone
+  const panelZone = document.querySelector('.panel-zone');
+  if (panelZone) {
+    document.addEventListener('scroll', () => {
+      const r = panelZone.getBoundingClientRect();
+      // switch when the panel zone has scrolled past the top third of viewport
+      if (r.bottom < window.innerHeight * 0.55) {
+        if (hero.classList.contains('campy')) setMode('gritty');
+      } else {
+        if (hero.classList.contains('gritty')) setMode('campy');
+      }
+    }, { passive: true });
+  }
+</script>
+
+</body>
+</html>

@@ -1,18 +1,718 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Pop Culture · Final Project</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Popular Times — Three Looks Back</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&family=Space+Grotesk:wght@400;500;600;700&family=Lobster&family=Pirata+One&family=Monoton&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #14110f;
+    --paper: #f3ede1;
+    --paper-2: #ebe3d0;
+    --accent-rap: #ffd400;
+    --accent-rap-ink: #b80c09;
+    --accent-hughes: #e07a5f;
+    --accent-hughes-2: #3d5a80;
+    --accent-comic: #d62828;
+    --rule: rgba(20,17,15,.15);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); }
+  body {
+    font-family: "Newsreader", Georgia, serif;
+    font-feature-settings: "ss01", "ss02";
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  /* modern meta type (Apple/Severance-feel) */
+  .mono { font-family: "Space Grotesk", "Helvetica Neue", sans-serif; }
+  a { color: inherit; text-decoration: none; }
+
+  /* ───── masthead ───── */
+  .masthead {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 24px 36px 20px;
+    border-bottom: 1px solid var(--ink);
+    background: var(--paper);
+    position: sticky; top: 0; z-index: 50;
+  }
+  .masthead .date-l {
+    font-family: "Space Grotesk", "Helvetica Neue", sans-serif;
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    opacity: .75;
+  }
+  .masthead .date-l b { color: var(--accent-comic); font-weight: 600; }
+  .masthead .date-r {
+    font-family: "Newsreader", serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(13px, 1.2vw, 16px);
+    line-height: 1.3;
+    color: #5a4d3e;
+    text-align: right;
+    text-transform: none;
+    opacity: 1;
+    letter-spacing: .005em;
+    max-width: 28ch;
+    margin-left: auto;
+  }
+  .masthead .logo {
+    display: block;
+    width: auto;
+    height: 64px;
+    mix-blend-mode: multiply;
+  }
+  .masthead .motto {
+    display: block;
+    text-align: center;
+    font-family: "Newsreader", serif;
+    font-style: italic;
+    font-size: 12px;
+    color: #5a4d3e;
+    margin-top: 6px;
+    letter-spacing: .02em;
+  }
+  .masthead .center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  @media (max-width: 720px) {
+    .masthead { grid-template-columns: 1fr; gap: 10px; text-align: center; }
+    .masthead .date-r { display: none; }
+    .masthead .date-l { text-align: center; }
+  }
+
+  /* ───── hero ───── */
+  .hero {
+    padding: 70px 36px 80px;
+    border-bottom: 1px solid var(--ink);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    position: relative;
+  }
+  /* decorative rule with ornament */
+  .hero-rule {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 18px;
+    font-family: "Space Grotesk", "Helvetica Neue", sans-serif;
+    font-size: 11px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: #4a3f33;
+    font-weight: 500;
+  }
+  .hero-rule::before, .hero-rule::after {
+    content: "";
+    height: 1px;
+    background: var(--ink);
+    opacity: .35;
+  }
+  .hero-rule .ornament {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: var(--accent-comic);
+    font-size: 10px;
+  }
+  .hero-rule .ornament::before,
+  .hero-rule .ornament::after {
+    content: "—";
+    color: #4a3f33;
+    opacity: .35;
+  }
+  .hero-rule .l, .hero-rule .r {
+    display: flex;
+    gap: 16px;
+  }
+  .hero-rule .r { justify-content: flex-end; }
+  .hero-rule .sep { opacity: .35; }
+
+  .hero h1 {
+    margin: 36px 0 28px;
+    font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    font-weight: 700;
+    font-size: clamp(72px, 12vw, 200px);
+    line-height: .92;
+    letter-spacing: -.045em;
+    color: var(--ink);
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: .28em;
+    flex-wrap: wrap;
+  }
+  .hero h1 .conn {
+    font-family: "Newsreader", serif;
+    font-style: italic;
+    font-weight: 500;
+    color: #6b5d4f;
+    font-size: .72em;
+    letter-spacing: -.02em;
+  }
+  .hero h1 .now::after {
+    content: ".";
+    color: var(--accent-comic);
+  }
+
+  /* standfirst */
+  .hero-dek {
+    font-family: "Newsreader", serif;
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.45;
+    font-weight: 400;
+    color: #2a221d;
+    max-width: 58ch;
+    margin: 0 auto 36px;
+    font-style: italic;
+    text-wrap: balance;
+  }
+  .hero-dek em {
+    font-style: normal;
+    font-weight: 600;
+    background: linear-gradient(180deg, transparent 60%, #ffe89a 60%);
+    padding: 0 2px;
+  }
+
+  /* signature line at the bottom */
+  .hero-sig {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 28px;
+    font-family: "Space Grotesk", "Helvetica Neue", sans-serif;
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: #4a3f33;
+    font-weight: 500;
+  }
+  .hero-sig .name { display: inline-flex; gap: 6px; align-items: center; }
+  .hero-sig .name::before {
+    content: "\2715";
+    color: var(--accent-comic);
+    font-weight: 600;
+  }
+  .hero-sig .by { opacity: .6; }
+
+  @media (max-width: 720px) {
+    .hero { padding: 50px 22px 56px; }
+    .hero-rule { font-size: 10px; gap: 10px; }
+    .hero-rule .l, .hero-rule .r { gap: 10px; }
+    .hero-sig { gap: 14px; font-size: 10px; flex-wrap: wrap; }
+  }
+
+  /* ───── ticker ───── */
+  .ticker {
+    border-bottom: 1px solid var(--ink);
+    overflow: hidden;
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .ticker-track {
+    display: inline-flex;
+    gap: 48px;
+    padding: 12px 0;
+    white-space: nowrap;
+    font-family: "Space Grotesk", "Helvetica Neue", sans-serif;
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    font-weight: 500;
+    animation: tick 40s linear infinite;
+  }
+  .ticker-track span { display: inline-flex; align-items: center; gap: 16px; }
+  .ticker-track span::after {
+    content: "◆"; color: var(--accent-rap); font-size: 8px;
+  }
+  @keyframes tick { to { transform: translateX(-50%); } }
+
+  /* ───── grid of features ───── */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-bottom: 1px solid var(--ink);
+  }
+  .feature {
+    display: flex;
+    flex-direction: column;
+    padding: 28px 28px 32px;
+    border-right: 1px solid var(--ink);
+    position: relative;
+    overflow: hidden;
+    transition: background .4s ease;
+  }
+  .feature:last-child { border-right: 0; }
+  .feature .num {
+    font-family: "Space Grotesk", "Helvetica Neue", sans-serif;
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    display: flex; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .feature .cat {
+    font-family: "Archivo Black", sans-serif;
+    font-size: 11px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    background: var(--ink);
+    color: var(--paper);
+    display: inline-block;
+    align-self: flex-start;
+    margin-bottom: 16px;
+  }
+  .feature h2 {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(36px, 4.6vw, 64px);
+    line-height: .9;
+    letter-spacing: -.015em;
+    margin: 0 0 18px;
+    text-transform: uppercase;
+  }
+  .feature h2 em {
+    font-family: "Newsreader", serif;
+    font-style: italic;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: -.005em;
+  }
+  .feature .blurb {
+    font-size: 16.5px;
+    line-height: 1.42;
+    margin: 0 0 24px;
+    max-width: 36ch;
+  }
+  .feature .byline {
+    margin-top: auto;
+    font-family: "Space Grotesk", "Helvetica Neue", sans-serif;
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 500;
+    display: flex; justify-content: space-between;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+  }
+  .feature .viz {
+    margin: 6px 0 22px;
+    height: 200px;
+    position: relative;
+  }
+
+  /* viz: rap — record player */
+  .viz-rap {
+    height: 240px;
+    position: relative;
+    background: #0e0c0a;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .viz-rap::before {
+    /* deck base shine */
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 30% 30%, rgba(255,255,255,.06) 0 30%, transparent 65%),
+      linear-gradient(180deg, #1c1814 0%, #0a0908 100%);
+  }
+  .vinyl {
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    position: relative;
+    background:
+      repeating-radial-gradient(circle at 50% 50%,
+        rgba(255,255,255,.05) 0 1px,
+        transparent 1px 3px),
+      radial-gradient(circle, #1a1815 0 12%, #0a0908 40%, #0a0908 100%);
+    box-shadow:
+      0 0 0 1px #050403,
+      0 10px 30px rgba(0,0,0,.6),
+      inset 0 0 30px rgba(255,255,255,.04);
+    animation: spin 4.2s linear infinite;
+  }
+  .vinyl::after {
+    /* center sticker */
+    content: "";
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 50%, #0e0c0a 0 3px, transparent 3.5px),
+      url("assets/mc_hammer_cover.jpg") center/cover no-repeat;
+    background-blend-mode: overlay;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.4);
+  }
+  .vinyl .sticker-text {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 130px; height: 130px;
+    transform: translate(-50%, -50%);
+    animation: spin 4.2s linear infinite reverse;
+    pointer-events: none;
+  }
+  .vinyl .sticker-text svg { width: 100%; height: 100%; }
+  .vinyl .sticker-text text {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    fill: #f6e6cc;
+    text-transform: uppercase;
+  }
+  .tonearm {
+    position: absolute;
+    top: 18px; right: 24px;
+    width: 140px; height: 0;
+    z-index: 3;
+    transform-origin: right center;
+    transform: rotate(-26deg);
+  }
+  .tonearm .arm {
+    position: absolute;
+    top: 0; right: 0;
+    width: 100%; height: 6px;
+    background: linear-gradient(180deg, #d9d3c3 0%, #8a8378 100%);
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(0,0,0,.4);
+  }
+  .tonearm .head {
+    position: absolute;
+    top: -4px; left: -14px;
+    width: 20px; height: 14px;
+    background: #2a1d12;
+    border-radius: 3px;
+  }
+  .tonearm .head::before {
+    content: "";
+    position: absolute;
+    left: 50%; bottom: -4px;
+    transform: translateX(-50%);
+    width: 2px; height: 6px;
+    background: #efe5d2;
+  }
+  .tonearm .pivot {
+    position: absolute;
+    top: -12px; right: -14px;
+    width: 28px; height: 28px;
+    background: radial-gradient(circle at 35% 35%, #efe5d2 0%, #a39884 60%, #5a5145 100%);
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0,0,0,.4);
+  }
+  .tonearm .pivot::after {
+    content: "";
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px; height: 8px;
+    background: #2a1d12;
+    border-radius: 50%;
+  }
+  /* corner sticker / 33rpm tag */
+  .viz-rap .tag {
+    position: absolute;
+    bottom: 12px; left: 12px;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--accent-rap);
+    background: rgba(255,212,0,.08);
+    padding: 4px 7px;
+    border: 1px solid rgba(255,212,0,.3);
+    z-index: 4;
+  }
+  @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+  /* override for .vinyl which uses different origin */
+  @keyframes vinylspin { to { transform: rotate(360deg); } }
+  .vinyl { animation-name: vinylspin; }
+ 
+  /* viz: hughes — filmstrip */
+  .viz-hughes {
+    height: 200px;
+    background:
+      repeating-linear-gradient(90deg, #222 0 14px, transparent 14px 28px) top/100% 18px no-repeat,
+      repeating-linear-gradient(90deg, #222 0 14px, transparent 14px 28px) bottom/100% 18px no-repeat,
+      #1a1a1a;
+    border-radius: 2px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    padding: 22px 8px;
+    overflow: hidden;
+    position: relative;
+  }
+  .viz-hughes .frame {
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .viz-hughes .frame::after {
+    content: ""; position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0 1px, transparent 1px 3px);
+  }
+  .viz-hughes .frame:nth-child(1) { background-image: url("assets/breakfast_club_poster.jpg"); }
+  .viz-hughes .frame:nth-child(2) { background-image: url("assets/planes_trains_poster.jpg"); }
+  .viz-hughes .frame:nth-child(3) { background-image: url("assets/uncle_buck_poster.jpg"); }
+  .viz-hughes .frame:nth-child(4) { background-image: url("assets/home_alone_poster.jpg"); }
+
+  /* viz: comics — halftone + panels */
+  .viz-comic {
+    height: 200px;
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 4px;
+  }
+  .viz-comic .panel {
+    position: relative;
+    overflow: hidden;
+    color: var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    background-size: cover;
+    background-position: center;
+  }
+  .viz-comic .panel:nth-child(1) {
+    grid-row: span 2;
+    background-color: #1a1714;
+    background-image:
+      radial-gradient(circle, rgba(243,237,225,.18) 1px, transparent 1.5px) 0 0/6px 6px,
+      url("assets/dkr_return.png");
+    background-blend-mode: multiply;
+  }
+  .viz-comic .panel.bright {
+    background-color: #ef8a1f;
+    background-image:
+      radial-gradient(circle, var(--accent-comic) 1.8px, transparent 2.4px) 0 0/8px 8px,
+      url("assets/watchmen_smiley.png");
+    background-blend-mode: multiply;
+    color: #ffefc6;
+    text-shadow: 2px 2px 0 var(--ink);
+  }
+  .viz-comic .panel:nth-child(3) {
+    background-color: #0e0c0a;
+    background-image:
+      radial-gradient(circle, rgba(42,111,177,.5) 1.8px, transparent 2.4px) 0 0/8px 8px,
+      url("assets/watchmen_manhattan.png");
+    background-blend-mode: multiply;
+  }
+  .viz-comic .panel .pow {
+    font-family: "Archivo Black", sans-serif;
+    font-size: 28px;
+    transform: rotate(-8deg);
+    letter-spacing: .02em;
+  }ans-serif;
+    font-size: 28px;
+    transform: rotate(-8deg);
+    letter-spacing: .02em;
+  }
+
+  .feature:hover { background: var(--paper-2); }
+  .feature .cta {
+    font-family: "Archivo Black", sans-serif;
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    align-self: flex-start;
+    padding: 10px 14px;
+    background: var(--ink);
+    color: var(--paper);
+    transition: transform .2s ease;
+  }
+  .feature:hover .cta { transform: translateX(4px); }
+  .feature .cta .arrow {
+    display: inline-block;
+    transition: transform .25s ease;
+  }
+  .feature:hover .cta .arrow { transform: translateX(4px); }
+
+  .feature.rap { background: var(--paper); }
+  .feature.rap:hover { background: var(--accent-rap); }
+  .feature.hughes:hover { background: #efd9bf; }
+  .feature.comic:hover { background: #f3d6d6; }
+
+  /* ───── colophon ───── */
+  .colophon {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr;
+    gap: 40px;
+    padding: 60px 36px 80px;
+    align-items: start;
+  }
+  .colophon h3 {
+    font-family: "Archivo Black", sans-serif;
+    font-size: 13px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    margin: 0 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--ink);
+  }
+  .colophon p {
+    font-size: 15px;
+    line-height: 1.5;
+    margin: 0 0 10px;
+  }
+  .colophon ul { list-style: none; padding: 0; margin: 0;
+    font-family: "Space Grotesk", "Helvetica Neue", sans-serif;
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .colophon ul li { padding: 6px 0; border-bottom: 1px dashed var(--rule); display: flex; justify-content: space-between; }
+
+  footer {
+    border-top: 1px solid var(--ink);
+    padding: 20px 36px;
+    font-family: "Space Grotesk", "Helvetica Neue", sans-serif;
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 500;
+    display: flex; justify-content: space-between;
+  }
+
+  /* link affordance */
+  .feature { cursor: pointer; }
+
+  @media (max-width: 980px) {
+    .hero { grid-template-columns: 1fr; gap: 24px; padding: 50px 24px 28px; }
+    .features { grid-template-columns: 1fr; }
+    .feature { border-right: 0; border-bottom: 1px solid var(--ink); min-height: auto; }
+    .colophon { grid-template-columns: 1fr; padding: 40px 24px 60px; }
+    .masthead { padding: 16px 20px; }
+    footer { padding: 16px 20px; flex-wrap: wrap; gap: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="date-l"><b id="today">···</b></div>
+  <a href="index.html" aria-label="Popular Times" style="display:inline-block;">
+    <img class="logo" src="assets/popular-times-logo.png" alt="Popular Times" />
+  </a>
+  <div class="date-r">“The news people want to read.”</div>
+</header>
+
+<section class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span>Pop Culture Final Project</span>
+    <span>Dr. Shapiro</span>
+    <span>2026</span>
+    <span>By David, Nick, Avi</span>
+    <span>Pop Culture Final Project</span>
+    <span>Dr. Shapiro</span>
+    <span>2026</span>
+    <span>By David, Nick, Avi</span>
+    <span>Pop Culture Final Project</span>
+    <span>Dr. Shapiro</span>
+    <span>2026</span>
+    <span>By David, Nick, Avi</span>
+  </div>
+</section>
+
+<section class="features">
+  <a class="feature rap" href="articles/rap.html">
+    <div class="num"><span>Nº 01</span><span>Music</span></div>
+    <span class="cat">Sound</span>
+    <h2><em>Hits So Hard</em></h2>
+    <p class="blurb">Since the 1990s, rap music has transformed itself dramatically in order to establish itself as one of the most dominant music genres of our modern day.</p>
+    <div class="viz viz-rap" aria-hidden="true">
+      <div class="vinyl">
+        <div class="sticker-text">
+          <svg viewBox="0 0 130 130">
+            <defs>
+              <path id="sticker-curve" d="M 65,65 m -46,0 a 46,46 0 1,1 92,0 a 46,46 0 1,1 -92,0"/>
+            </defs>
+            <text>
+              <textPath href="#sticker-curve" startOffset="0%">SIDE A · 33⅓ RPM · LONG PLAY · STEREO ·</textPath>
+            </text>
+          </svg>
+        </div>
+      </div>
+      <div class="tonearm">
+        <div class="pivot"></div>
+        <div class="arm"></div>
+        <div class="head"></div>
+      </div>
+      <div class="tag">33⅓ RPM</div>
+    </div>
+    <div class="cta">Read the piece <span class="arrow">→</span></div>
+    <div class="byline"><span>5 min read</span><span>1990 / 2025</span></div>
+  </a>
+
+  <a class="feature hughes" href="articles/hughes.html">
+    <div class="num"><span>Nº 02</span><span>Cinema</span></div>
+    <span class="cat">Film</span>
+    <h2><em>Saturday on Loop</em></h2>
+    <p class="blurb">In the 1980s and 1990s John Hughes became a prolific director creating many famous movies ranging from coming of age films to timeless comedies watched year-round.</p>
+    <div class="viz viz-hughes" aria-hidden="true">
+      <div class="frame"></div>
+      <div class="frame"></div>
+      <div class="frame"></div>
+      <div class="frame"></div>
+    </div>
+    <div class="cta">Read the piece <span class="arrow">→</span></div>
+    <div class="byline"><span>4 min read</span><span>1985 / Forever</span></div>
+  </a>
+
+  <a class="feature comic" href="articles/comics.html">
+    <div class="num"><span>Nº 03</span><span>Pulp</span></div>
+    <span class="cat">Page · Screen</span>
+    <h2><em>Pulp to Box Office</em></h2>
+    <p class="blurb">Comic books prior to the 90s focused primarily on kid-friendly topics that followed straightforward plotlines of good and evil, with occasional references to deeper themes.</p>
+    <div class="viz viz-comic" aria-hidden="true">
+      <div class="panel"><span class="pow">KRAKK!</span></div>
+      <div class="panel bright"><span class="pow">POW!</span></div>
+      <div class="panel"><span class="pow">BAM</span></div>
+    </div>
+    <div class="cta">Read the piece <span class="arrow">→</span></div>
+    <div class="byline"><span>3 min read</span><span>1986 / Now</span></div>
+  </a>
+</section>
+
+<footer>
+  <span>© POPULAR TIMES MMXXVI</span>
+  <span>A Pop Culture Final Project · Dr. Shapiro · 2026</span>
+  <span>David · Nick · Avi</span>
+</footer>
+
+<script>
+  // live date in masthead
+  (() => {
+    const el = document.getElementById('today');
+    if (!el) return;
+    const d = new Date();
+    const opts = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+    el.textContent = d.toLocaleDateString('en-US', opts);
+  })();
+</script>
+
+</body>
 </html>
