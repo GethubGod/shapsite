@@ -660,7 +660,7 @@
     box-shadow: 6px 6px 0 var(--ink);
   }
   .mcu-card .poster {
-    aspect-ratio: 3/2;
+    aspect-ratio: 2/3;
     position: relative;
     overflow: hidden;
     color: var(--paper);
@@ -923,6 +923,26 @@
     text-align: right;
   }
   .bo-row .r .pre { color: var(--red); font-size: .7em; }
+  .bo-row.oscar-row {
+    position: relative;
+    overflow: visible;
+  }
+  .oscar-3d {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 140px;
+    width: auto;
+    z-index: 15;
+    pointer-events: none;
+    filter: drop-shadow(4px 8px 12px rgba(0,0,0,0.6));
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), filter 0.3s ease;
+  }
+  .bo-row.oscar-row:hover .oscar-3d {
+    transform: translateY(-50%) scale(1.15) rotate(-5deg);
+    filter: drop-shadow(8px 16px 20px rgba(0,0,0,0.75));
+  }
 
   /* opening-weekend bar chart */
   .bo-bars {
@@ -1106,7 +1126,7 @@
   <a href="../index.html">← Index</a>
   <a class="wm" href="../index.html" aria-label="Popular Times">
     <img src="../assets/popular-times-logo.png" alt="Popular Times" />
-    <span class="motto">“The news people want to read.”</span>
+    <span class="motto">“Escaping the boring structured reality into a world of entertainment.”</span>
   </a>
   <span class="right">Nº 03 · Pulp · Screen</span>
 </header>
@@ -1242,22 +1262,24 @@
 
     <div class="bo-grid">
       <div class="bo-hero">
-        <div class="big"><span class="pre">$</span>1.005<span style="font-size:.5em">B</span></div>
+        <div class="big"><span class="pre">$</span><span class="bo-count" data-target="1.005" data-decimals="3">1.005</span><span style="font-size:.5em">B</span></div>
         <div class="title">The Dark Knight</div>
         <div class="lbl">Worldwide gross — the first comic-book adaptation to clear the billion-dollar mark, and the highest-grossing film of 2008.</div>
       </div>
       <div class="bo-side">
         <div class="bo-row">
           <div class="l">Opening weekend · Domestic</div>
-          <div class="r"><span class="pre">$</span>158<span style="font-size:.6em">M</span></div>
+          <div class="r"><span class="pre">$</span><span class="bo-count" data-target="158" data-decimals="0">158</span><span style="font-size:.6em">M</span></div>
         </div>
         <div class="bo-row">
           <div class="l">Domestic total</div>
-          <div class="r"><span class="pre">$</span>534<span style="font-size:.6em">M</span></div>
+          <div class="r"><span class="pre">$</span><span class="bo-count" data-target="534" data-decimals="0">534</span><span style="font-size:.6em">M</span></div>
         </div>
-        <div class="bo-row">
-          <div class="l">Posthumous Oscar · Heath Ledger · Supporting Actor</div>
-          <div class="r">★</div>
+        <div class="bo-row oscar-row">
+          <div class="l" style="max-width: 65%;">Posthumous Oscar · Heath Ledger · Supporting Actor</div>
+          <div class="r" style="display: flex; align-items: center; justify-content: flex-end; width: 30px; height: 38px; position: relative;">
+            <img src="../assets/oscar_trophy.png" class="oscar-3d" alt="Oscar Trophy" />
+          </div>
         </div>
       </div>
     </div>
@@ -1266,28 +1288,28 @@
       <div class="ttl">2008 · Top of the worldwide chart</div>
       <div class="bar-row feature">
         <span class="name"><b>1 · The Dark Knight</b></span>
-        <span class="bar"><span class="fill" style="width:100%"></span></span>
-        <span class="v">$1.0B</span>
+        <span class="bar"><span class="fill" data-width="100" style="width:0%"></span></span>
+        <span class="v">$<span class="bo-count" data-target="1.0" data-decimals="1">1.0</span>B</span>
       </div>
       <div class="bar-row">
         <span class="name">2 · Indiana Jones & the Crystal Skull</span>
-        <span class="bar"><span class="fill" style="width:79%"></span></span>
-        <span class="v">$790M</span>
+        <span class="bar"><span class="fill" data-width="79" style="width:0%"></span></span>
+        <span class="v">$<span class="bo-count" data-target="790" data-decimals="0">790</span>M</span>
       </div>
       <div class="bar-row">
         <span class="name">3 · Kung Fu Panda</span>
-        <span class="bar"><span class="fill" style="width:63%"></span></span>
-        <span class="v">$632M</span>
+        <span class="bar"><span class="fill" data-width="63" style="width:0%"></span></span>
+        <span class="v">$<span class="bo-count" data-target="632" data-decimals="0">632</span>M</span>
       </div>
       <div class="bar-row">
         <span class="name">4 · Hancock</span>
-        <span class="bar"><span class="fill" style="width:62%"></span></span>
-        <span class="v">$624M</span>
+        <span class="bar"><span class="fill" data-width="62" style="width:0%"></span></span>
+        <span class="v">$<span class="bo-count" data-target="624" data-decimals="0">624</span>M</span>
       </div>
       <div class="bar-row">
         <span class="name">5 · Mamma Mia!</span>
-        <span class="bar"><span class="fill" style="width:61%"></span></span>
-        <span class="v">$610M</span>
+        <span class="bar"><span class="fill" data-width="61" style="width:0%"></span></span>
+        <span class="v">$<span class="bo-count" data-target="610" data-decimals="0">610</span>M</span>
       </div>
     </div>
   </div>
@@ -1301,7 +1323,6 @@
 <!-- MCU MOMENTS SHOWCASE -->
 <section class="mcu">
   <div class="inner">
-    <div class="lbl">After the snap · Notable Marvel Cinematic Universe entries</div>
     <h2>Phase after phase, <em>era after era.</em></h2>
 
     <div class="mcu-grid">
@@ -1355,7 +1376,7 @@
 <section class="stats">
   <div class="stat">
     <div class="n"><span class="pre">#</span>4</div>
-    <div class="l">Dark Knight Trilogy entry — among the highest grossing films of all time</div>
+    <div class="l">highest grossing during the 2000s</div>
   </div>
   <div class="stat">
     <div class="n">18<span style="font-size:.5em">yr</span></div>
@@ -1369,7 +1390,7 @@
 
 <!-- END / NEXT -->
 <section class="endcard">
-  <h3>That's a wrap on Issue 014</h3>
+  <h3>Thank you for reading</h3>
   <p style="opacity:.85; font-family: 'JetBrains Mono', monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase;">Read again, or pick another piece from the issue</p>
   <a class="next" href="rap.html">← Nº 01 · Hits So Hard</a>
   <a class="home" href="../index.html">Back to issue</a>
@@ -1415,6 +1436,58 @@
       }
     }, { passive: true });
   }
+
+  // box office scroll animation
+  const boSection = document.querySelector('.boxoffice');
+  const boCounts = document.querySelectorAll('.bo-count');
+  const boFills = document.querySelectorAll('.boxoffice .fill');
+
+  let boAnimFrame = null;
+  const updateBoxOfficeAnimation = () => {
+    if (!boSection) return;
+    const rect = boSection.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+
+    // Animation starts when the top of the boxoffice enters the bottom of the screen (rect.top = viewportHeight)
+    // Animation is fully completed (progress = 1) when the bottom of the boxoffice is fully in view (rect.bottom = viewportHeight).
+    // If the boxoffice is taller than the screen, it completes when the top of the boxoffice reaches the top of the screen (rect.top = 0).
+    const startY = viewportHeight;
+    const endY = Math.max(0, viewportHeight - rect.height);
+
+    let progress = 0;
+    if (rect.top >= startY) {
+      progress = 0;
+    } else if (rect.top <= endY) {
+      progress = 1;
+    } else {
+      progress = (startY - rect.top) / (startY - endY);
+    }
+
+    // Update fills
+    boFills.forEach(fill => {
+      const targetWidth = parseFloat(fill.getAttribute('data-width') || '0');
+      fill.style.width = (progress * targetWidth) + '%';
+    });
+
+    // Update count ups
+    boCounts.forEach(el => {
+      const target = parseFloat(el.getAttribute('data-target') || '0');
+      const decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
+      const currentVal = progress * target;
+      el.textContent = currentVal.toFixed(decimals);
+    });
+  };
+
+  const onScrollOrResize = () => {
+    if (boAnimFrame) {
+      cancelAnimationFrame(boAnimFrame);
+    }
+    boAnimFrame = requestAnimationFrame(updateBoxOfficeAnimation);
+  };
+
+  document.addEventListener('scroll', onScrollOrResize, { passive: true });
+  window.addEventListener('resize', onScrollOrResize, { passive: true });
+  updateBoxOfficeAnimation();
 </script>
 
 </body>

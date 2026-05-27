@@ -6,7 +6,7 @@
 <title>Hits So Hard — Popular Times</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,600&family=Space+Grotesk:wght@400;500;600;700&family=Lobster&family=Pirata+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,600&family=Space+Grotesk:wght@400;500;600;700&family=Lobster&family=Pirata+One&family=Caveat:wght@600;700&family=Reenie+Beanie&display=swap" rel="stylesheet">
 <style>
   :root {
     --ink: #0e0c0a;
@@ -230,14 +230,14 @@
   .section-label .line { flex: 1; height: 1px; background: var(--ink); }
 
   /* ============================================================
-     COMPARATOR — split lyrics, drag the bar to crossfade eras
+     COMPARATOR — split lyrics analysis pinboard
   ============================================================ */
   .compare {
     margin: 80px 0;
     padding: 0 36px;
   }
   .compare .label {
-    font-family: "JetBrains Mono", monospace;
+    font-family: "Space Grotesk", sans-serif;
     font-size: 11px;
     letter-spacing: .14em;
     text-transform: uppercase;
@@ -259,74 +259,334 @@
     width: 100%;
     max-width: 1100px;
     margin: 0 auto;
-    height: 540px;
+    height: 720px;
     overflow: hidden;
-    border: 1px solid var(--ink);
-    background: var(--paper-2);
+    border: 3px solid var(--ink);
+    background: #ebe3d0; /* Corkboard base */
     user-select: none;
     cursor: ew-resize;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.15);
   }
+  
+  /* Each side of the slider */
   .side {
     position: absolute;
     inset: 0;
-    padding: 56px 60px;
-    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 40px 48px;
+    display: flex; 
+    flex-direction: column; 
+    justify-content: flex-start;
+    overflow: hidden;
   }
   .side.then {
-    background: var(--acid);
+    z-index: 1;
+    background: 
+      radial-gradient(circle at 10% 10%, rgba(201, 26, 26, 0.03) 0, transparent 40%),
+      #ffd400; /* Rich gold/yellow chalkboard */
     color: var(--ink);
   }
   .side.now {
-    background: #1a1714;
+    z-index: 2;
+    background: 
+      radial-gradient(circle at 80% 20%, rgba(255, 212, 0, 0.05) 0, transparent 45%),
+      linear-gradient(135deg, #1f1c18 0%, #110f0d 100%); /* Slate/chalkboard dark */
     color: var(--paper);
     clip-path: inset(0 0 0 50%);
-    align-items: flex-end;
-    text-align: right;
   }
-  .side.now > div:first-child { width: 100%; text-align: right; }
-  .side.now .lyric { margin-left: auto; }
-  .side.now .foot { width: 100%; }
+
   .side .era {
     font-family: "Archivo Black", sans-serif;
     font-size: 14px;
     letter-spacing: .14em;
     text-transform: uppercase;
+    text-shadow: 1px 1px 0 rgba(255,255,255,0.1);
+  }
+  .side.now .era {
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
   }
   .side .song {
-    font-family: "JetBrains Mono", monospace;
+    font-family: "Space Grotesk", sans-serif;
     font-size: 11px;
     letter-spacing: .08em;
     text-transform: uppercase;
-    opacity: .7;
+    opacity: .8;
     margin-top: 4px;
   }
-  .side .lyric {
+  /* Mirror title on the right side so 'now' song is visible at 50/50 */
+  .side.now .header-right {
+    position: absolute;
+    top: 40px;
+    right: 48px;
+    text-align: right;
+    z-index: 8;
+  }
+  .side.now .header-right .era {
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+  }
+  .side.now .header-right .song {
+    opacity: .8;
+  }
+  
+  /* Lyric Block and Annotations */
+  .side .lyric-block {
+    margin-top: 36px;
     font-family: "Newsreader", serif;
     font-style: italic;
     font-weight: 500;
-    font-size: clamp(20px, 2.4vw, 30px);
-    line-height: 1.35;
-    max-width: 22ch;
-    margin: 24px 0;
-    text-wrap: balance;
+    font-size: clamp(19px, 2.3vw, 24px);
+    line-height: 1.75;
+    max-width: 46%;
+    position: relative;
+    z-index: 6;
   }
+  .side.then .lyric-block {
+    text-align: left;
+  }
+  .side.now .lyric-block {
+    text-align: left;
+    margin-left: 54%; /* positioned on the right half, showingCarti's side */
+    max-width: 44%;
+  }
+
+  /* Lyric annotation highlight / underlines */
+  .lyric-block .ann {
+    position: relative;
+    display: inline;
+    cursor: pointer;
+  }
+  .lyric-block .ann::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -2px;
+    height: 3px;
+    border-radius: 1px;
+    transition: opacity 0.2s;
+  }
+  /* Hand-drawn look underlines for MC Hammer (Red marker) */
+  .side.then .ann.wavy::after {
+    background: repeating-linear-gradient(90deg, #c91a1a 0 6px, transparent 6px 9px);
+  }
+  .side.then .ann.solid::after {
+    background: #c91a1a;
+  }
+  .side.then .ann.double::after {
+    background: #c91a1a;
+    height: 2px;
+    box-shadow: 0 4px 0 #c91a1a;
+  }
+  /* Hand-drawn look underlines for Carti (Acid-yellow chalk) */
+  .side.now .ann.wavy::after {
+    background: repeating-linear-gradient(90deg, var(--acid) 0 6px, transparent 6px 9px);
+  }
+  .side.now .ann.solid::after {
+    background: var(--acid);
+  }
+  .side.now .ann.double::after {
+    background: var(--acid);
+    height: 2px;
+    box-shadow: 0 4px 0 var(--acid);
+  }
+  /* Subtle highlight marker look */
+  .lyric-block .ann.highlight {
+    background: rgba(201, 26, 26, 0.12);
+    padding: 0 3px;
+    border-radius: 2px;
+  }
+  .side.now .ann.highlight {
+    background: rgba(255, 212, 0, 0.1);
+  }
+
+  /* Connection string / detective board thread */
+  .conn-thread {
+    position: absolute;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0.85;
+  }
+  .conn-thread path {
+    fill: none;
+    stroke-linecap: round;
+  }
+  .side.then .conn-thread path {
+    stroke: #b31919;
+    stroke-dasharray: 4 4;
+  }
+  .side.now .conn-thread path {
+    stroke: var(--acid);
+    stroke-dasharray: 4 4;
+  }
+
+  /* Marginal handwritten comments */
+  .margin-comment {
+    position: absolute;
+    font-family: 'Caveat', cursive;
+    font-size: 17px;
+    line-height: 1.2;
+    max-width: 140px;
+    font-style: normal;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .side.then .margin-comment {
+    color: #8c1e1e;
+  }
+  .side.now .margin-comment {
+    color: #e5cc8a;
+  }
+
+  /* Pin wall polaroids */
+  .pin-polaroid {
+    position: absolute;
+    z-index: 10;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  .pin-polaroid:hover {
+    transform: scale(1.08) rotate(0deg) !important;
+    z-index: 25;
+  }
+  .polaroid-frame {
+    background: #fbfbf6;
+    border: 1px solid rgba(0,0,0,0.12);
+    box-shadow: 4px 10px 24px rgba(0,0,0,0.22);
+    padding: 10px 10px 24px 10px;
+    text-align: center;
+    border-radius: 2px;
+  }
+  .polaroid-frame .img-box {
+    width: 130px;
+    height: 120px;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+  .polaroid-frame .caption {
+    font-family: 'Reenie Beanie', cursive;
+    font-size: 19px;
+    color: #2e2014;
+    margin-top: 8px;
+    line-height: 1;
+    font-weight: bold;
+  }
+
+  /* Pushpins to hold items */
+  .pushpin {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 15px;
+    height: 15px;
+    background: radial-gradient(circle at 35% 35%, #ff5252 0%, #c62828 60%, #5f0909 100%);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.35);
+    z-index: 12;
+  }
+  .pushpin::after {
+    content: "";
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 2px; height: 10px;
+    background: #b5b5b5;
+    transform: translate(-50%, 0) rotate(15deg);
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+  }
+  .pushpin.blue {
+    background: radial-gradient(circle at 35% 35%, #52b3ff 0%, #0d6efd 60%, #052c65 100%);
+  }
+  .pushpin.yellow {
+    background: radial-gradient(circle at 35% 35%, #ffeb3b 0%, #fbc02d 60%, #a87e00 100%);
+  }
+
+  /* Sticky notes */
+  .sticky-note {
+    position: absolute;
+    width: 170px;
+    padding: 14px 16px 12px;
+    box-shadow: 4px 8px 20px rgba(0,0,0,0.28);
+    font-family: 'Caveat', cursive;
+    font-size: 16.5px;
+    line-height: 1.25;
+    color: #21160a;
+    border-bottom-right-radius: 18px 4px; /* subtle page curl */
+    z-index: 8;
+    transition: transform 0.3s ease;
+  }
+  .sticky-note:hover {
+    transform: scale(1.06) rotate(0deg) !important;
+    z-index: 25;
+  }
+  .sticky-note.yellow {
+    background: #fff89f;
+    border: 1px solid rgba(230, 210, 0, 0.2);
+  }
+  .sticky-note.cyan {
+    background: #cbf6f8;
+    border: 1px solid rgba(0, 180, 200, 0.15);
+  }
+  .sticky-note.pink {
+    background: #ffd0dc;
+    border: 1px solid rgba(230, 50, 100, 0.15);
+  }
+  .sticky-note .note-hdr {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 8px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 5px;
+    display: block;
+    font-weight: 600;
+  }
+  .sticky-note .note-quote {
+    font-style: italic;
+    opacity: 0.85;
+    margin-top: 4px;
+    font-size: 13.5px;
+    border-left: 2px solid rgba(0,0,0,0.15);
+    padding-left: 6px;
+    line-height: 1.3;
+  }
+
+  /* Bracket annotation */
+  .bracket-note {
+    position: absolute;
+    font-family: "Newsreader", serif;
+    font-size: 72px;
+    font-weight: 300;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 4;
+    opacity: 0.35;
+  }
+  .side.then .bracket-note { color: #8c1e1e; }
+  .side.now .bracket-note { color: var(--acid); opacity: 0.25; }
+
+  /* Footer BPM and Tone markers */
   .side .foot {
-    font-family: "JetBrains Mono", monospace;
+    position: absolute;
+    bottom: 24px;
+    left: 48px;
+    right: 48px;
+    font-family: "Space Grotesk", sans-serif;
     font-size: 11px;
     letter-spacing: .1em;
     text-transform: uppercase;
-    display: flex; justify-content: space-between;
+    display: flex; 
+    justify-content: space-between;
+    z-index: 10;
   }
   .side.now .foot { opacity: .7; }
 
+  /* Slider divider handle */
   .handle {
     position: absolute;
     top: 0; bottom: 0;
     width: 2px;
     background: var(--red);
-    z-index: 5;
+    z-index: 20;
     left: 50%;
     transform: translateX(-50%);
+    cursor: ew-resize;
   }
   .handle::before {
     content: ""; position: absolute;
@@ -336,25 +596,38 @@
     background: var(--red);
     border-radius: 50%;
     box-shadow: 0 4px 18px rgba(0,0,0,.3);
+    cursor: ew-resize;
   }
   .handle::after {
     content: "◀ ▶"; position: absolute;
     left: 50%; top: 50%;
     transform: translate(-50%, -50%);
     color: var(--paper);
-    font-family: "JetBrains Mono", monospace;
+    font-family: "Space Grotesk", sans-serif;
     font-size: 10px;
     letter-spacing: .1em;
-    z-index: 2;
+    z-index: 22;
+    pointer-events: none;
   }
+  
   .compare .instr {
     text-align: center;
-    margin-top: 14px;
-    font-family: "JetBrains Mono", monospace;
-    font-size: 11px;
-    letter-spacing: .1em;
+    margin-top: 18px;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .08em;
     text-transform: uppercase;
-    color: #5a4d40;
+    color: var(--ink);
+    background: var(--acid);
+    display: inline-block;
+    padding: 10px 22px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .compare .instr-wrap {
+    text-align: center;
+    margin-top: 18px;
   }
 
   /* image placeholders (no real images per copyright) */
@@ -365,6 +638,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 22px;
+    align-items: center; /* keep cards vertically aligned properly */
   }
   .fig {
     aspect-ratio: 3/4;
@@ -397,6 +671,154 @@
     opacity: 1;
     transform: scale(1.03);
   }
+
+  /* Vinyl Album Cover Styles */
+  .fig.vinyl {
+    aspect-ratio: 1/1; /* Square aspect ratio */
+    overflow: visible; /* to allow the sliding vinyl and backdrop rotation to peek out */
+    position: relative;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  .vinyl-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  /* The backing rectangle overlay (vinyl backing on wall) */
+  .vinyl-backdrop {
+    position: absolute;
+    inset: 0px;
+    background: var(--paper-2);
+    border: 3px solid var(--ink);
+    transform: rotate(-4deg) translate(-10px, -6px);
+    box-shadow: 4px 8px 16px rgba(0,0,0,0.15);
+    z-index: 1;
+    transition: transform 0.4s ease;
+  }
+  .fig.vinyl:hover .vinyl-backdrop {
+    transform: rotate(-2deg) translate(-6px, -4px);
+  }
+  /* The album cover sleeve */
+  .vinyl-cover {
+    position: absolute;
+    inset: 0px;
+    background: var(--ink);
+    border: 3px solid var(--ink);
+    box-shadow: 8px 12px 24px rgba(0,0,0,0.25);
+    z-index: 3;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .vinyl-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+  }
+  .fig.vinyl:hover .vinyl-cover img {
+    opacity: 1;
+  }
+  /* The vinyl record sliding out */
+  .fig.vinyl .vinyl-disc {
+    position: absolute;
+    top: 10%;
+    left: 40%; /* slides out to the right */
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    background:
+      repeating-radial-gradient(circle at center,
+        #1c1815 0 2px,
+        #0c0a09 2px 4px);
+    box-shadow:
+      0 0 0 1px #050403,
+      8px 12px 24px rgba(0,0,0,0.45),
+      inset 0 0 15px rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2; /* behind cover, in front of backdrop */
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .fig.vinyl:hover .vinyl-disc {
+    transform: translateX(35%) rotate(120deg); /* slides out and rotates beautifully */
+  }
+  /* vinyl center hole */
+  .fig.vinyl .vinyl-disc::before {
+    content: "";
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--paper);
+    z-index: 5;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+  }
+  /* center sticker of the vinyl disc */
+  .fig.vinyl .vinyl-disc .vinyl-disc-label {
+    position: static; /* override absolute */
+    width: 38%;
+    height: 38%;
+    border-radius: 50%;
+    object-fit: cover;
+    opacity: 0.95;
+    z-index: 4;
+    border: 1px solid rgba(0,0,0,0.4);
+    background-color: transparent;
+    transition: opacity 0.3s ease;
+  }
+  .fig.vinyl:hover .vinyl-disc .vinyl-disc-label {
+    opacity: 1;
+  }
+  /* Listen badge overlay on vinyl covers */
+  .vinyl-listen {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 15;
+    background: #1DB954;
+    color: #fff;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 7px 14px;
+    border-radius: 20px;
+    white-space: nowrap;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+    opacity: 0.9;
+    transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .vinyl-listen svg {
+    width: 14px;
+    height: 14px;
+    fill: #fff;
+  }
+  .fig.vinyl:hover .vinyl-listen {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.08);
+    box-shadow: 0 6px 20px rgba(29,185,84,0.5);
+  }
+  /* Make the entire vinyl figure act like a link */
+  a.vinyl-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  a.vinyl-link .fig .label {
+    cursor: pointer;
+  }
   .fig .label {
     position: absolute;
     inset: auto 12px 12px 12px;
@@ -406,7 +828,7 @@
     text-transform: uppercase;
     color: var(--paper);
     line-height: 1.4;
-    z-index: 2;
+    z-index: 10;
     background: rgba(14, 12, 10, 0.75);
     padding: 8px;
     border-radius: 2px;
@@ -434,7 +856,7 @@
     font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
     background: var(--paper); color: var(--ink);
     padding: 4px 7px;
-    z-index: 2;
+    z-index: 10;
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
   }
 
@@ -565,17 +987,389 @@
     color: var(--paper);
   }
 
+  .still-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-self: stretch;
+  }
+  .still-frame {
+    aspect-ratio: 16/9;
+    position: relative;
+    overflow: hidden;
+    border: 3px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink);
+    background: #0d0c0a;
+  }
+  .still-frame img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+  }
+  .still-frame:hover img {
+    opacity: 1;
+  }
+  .still-frame .marker {
+    position: absolute; top: 12px; left: 12px;
+    font-family: "Archivo Black", sans-serif;
+    font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+    background: var(--paper); color: var(--ink);
+    padding: 4px 7px;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+  .desc-card {
+    margin-top: 16px;
+    background: var(--paper-2);
+    border: 3px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink);
+    padding: 14px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    line-height: 1.45;
+    color: var(--ink);
+  }
+  .desc-card b {
+    display: block;
+    font-family: "Archivo Black", sans-serif;
+    font-size: 12px;
+    margin-bottom: 6px;
+    color: var(--red);
+  }
+  
+  /* Virtual Pinboard Scrapbook Styles */
+  @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Reenie+Beanie&display=swap');
+  
+  .pinboard-item {
+    position: absolute;
+    z-index: 10;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  .pinboard-item:hover {
+    transform: scale(1.08) rotate(0deg) !important;
+    z-index: 20;
+    cursor: pointer;
+  }
+  
+  .pin-polaroid {
+    background: #faf6eb;
+    border: 1px solid rgba(0,0,0,0.15);
+    box-shadow: 4px 8px 16px rgba(0,0,0,0.3);
+    padding: 10px 10px 24px 10px;
+    width: 140px;
+    text-align: center;
+  }
+  .pin-polaroid .img-holder {
+    width: 120px;
+    height: 110px;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+  .pin-polaroid .caption {
+    font-family: 'Reenie Beanie', cursive;
+    font-size: 19px;
+    color: #2b1d12;
+    margin-top: 6px;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    font-weight: bold;
+  }
+  
+  .pin-sticky {
+    padding: 14px 14px 12px 14px;
+    width: 160px;
+    box-shadow: 3px 6px 12px rgba(0,0,0,0.25);
+    font-family: 'Caveat', cursive;
+    font-size: 19px;
+    line-height: 1.2;
+    color: #1a0f08;
+    position: relative;
+    border-bottom-right-radius: 20px 4px; /* Slight page curl look */
+  }
+  .pin-sticky.yellow {
+    background: #fff69d;
+    border: 1px solid rgba(255, 230, 0, 0.15);
+  }
+  .pin-sticky.cyan {
+    background: #c3f2f5;
+    border: 1px solid rgba(0, 180, 200, 0.15);
+  }
+  
+  .pushpin {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 14px;
+    height: 14px;
+    background: radial-gradient(circle at 35% 35%, #ff5252 0%, #c62828 60%, #5f0909 100%);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    z-index: 12;
+  }
+  .pushpin::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 10px;
+    background: #ccc;
+    transform: translate(-50%, 0) rotate(15deg);
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+  }
+  
+  .pushpin.blue {
+    background: radial-gradient(circle at 35% 35%, #52b3ff 0%, #0d6efd 60%, #052c65 100%);
+  }
+
+  .pushpin.yellow {
+    background: radial-gradient(circle at 35% 35%, #ffeb3b 0%, #fbc02d 60%, #a87e00 100%);
+  }
+  
+  .hand-circle {
+    position: absolute;
+    width: 130px;
+    height: 48px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* ═══ Spotify-Style Lyrics ═══ */
+  .side .lyric-container {
+    position: absolute;
+    top: 90px;
+    bottom: 80px;
+    width: 48%;
+    z-index: 6;
+    font-family: "Archivo Black", "Space Grotesk", sans-serif;
+    font-weight: 800;
+    font-size: clamp(15px, 1.7vw, 22px);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: inherit;
+    pointer-events: auto;
+    overflow-y: auto;
+    padding: 0 12px 40px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .side.then .lyric-container {
+    left: 4%;
+    text-align: left;
+  }
+  .side.now .lyric-container {
+    left: 52%;
+    text-align: left;
+  }
+
+  /* Scrollbar Customization */
+  .side .lyric-container::-webkit-scrollbar {
+    width: 4px;
+  }
+  .side .lyric-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .side .lyric-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.12);
+    border-radius: 3px;
+  }
+  .side.now .lyric-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  /* Individual lyric lines — Spotify style */
+  .lyric-line {
+    display: block;
+    padding: 6px 8px;
+    border-radius: 4px;
+    opacity: 0.45;
+    transition: opacity 0.25s ease, color 0.25s ease, background 0.25s ease, transform 0.2s ease;
+    cursor: default;
+    line-height: 1.35;
+  }
+  .lyric-line:hover {
+    opacity: 1;
+  }
+  /* When a note is hovered, its linked lyrics get highlighted */
+  .lyric-line.lyric-highlighted {
+    opacity: 1;
+    transform: translateX(4px);
+  }
+  .side.then .lyric-line.lyric-highlighted {
+    background: rgba(201, 26, 26, 0.12);
+    color: #1a0a05;
+  }
+  .side.now .lyric-line.lyric-highlighted {
+    background: rgba(255, 212, 0, 0.1);
+    color: #fff;
+  }
+  /* When a lyric line with a linked note is hovered */
+  .lyric-line[data-note] {
+    cursor: pointer;
+    position: relative;
+  }
+  .lyric-line[data-note]::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 0%;
+    border-radius: 2px;
+    transition: height 0.25s ease;
+  }
+  .side.then .lyric-line[data-note]::before {
+    background: #c91a1a;
+  }
+  .side.now .lyric-line[data-note]::before {
+    background: var(--acid);
+  }
+  .lyric-line[data-note]:hover::before,
+  .lyric-line[data-note].lyric-highlighted::before {
+    height: 70%;
+  }
+  /* Blank line spacer between verses */
+  .lyric-line.verse-break {
+    height: 16px;
+    padding: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* ═══ Scattered Annotations Container ═══ */
+  .side .annotations-container {
+    position: absolute;
+    top: 80px;
+    bottom: 80px;
+    width: 46%;
+    z-index: 10;
+    pointer-events: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px 10px 40px;
+  }
+  .side.then .annotations-container {
+    left: 51%;
+  }
+  .side.now .annotations-container {
+    left: 2%;
+  }
+  /* Scrollbar for annotations */
+  .side .annotations-container::-webkit-scrollbar {
+    width: 4px;
+  }
+  .side .annotations-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .side .annotations-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+  }
+  .side.now .annotations-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Scattered pinboard items — random transforms applied via inline style */
+  .side .annotations-container .pinboard-item {
+    position: relative;
+    margin-bottom: 16px;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease, opacity 0.3s ease;
+    opacity: 0.88;
+    cursor: pointer;
+  }
+  .side .annotations-container .pinboard-item:hover {
+    z-index: 25;
+    opacity: 1;
+  }
+  /* Highlighted note (when its linked lyric is hovered) */
+  .side .annotations-container .pinboard-item.note-highlighted {
+    opacity: 1;
+    z-index: 25;
+  }
+  .side.then .annotations-container .pinboard-item.note-highlighted {
+    box-shadow: 0 0 0 3px #c91a1a, 4px 8px 20px rgba(0,0,0,0.35);
+  }
+  .side.now .annotations-container .pinboard-item.note-highlighted {
+    box-shadow: 0 0 0 3px var(--acid), 4px 8px 20px rgba(0,0,0,0.35);
+  }
+  /* Enlarged / active note (clicked) */
+  .side .annotations-container .pinboard-item.note-active {
+    transform: scale(1.25) rotate(0deg) !important;
+    z-index: 30;
+    opacity: 1;
+  }
+  .side.then .annotations-container .pinboard-item.note-active {
+    box-shadow: 0 0 0 3px #c91a1a, 6px 12px 32px rgba(0,0,0,0.45);
+  }
+  .side.now .annotations-container .pinboard-item.note-active {
+    box-shadow: 0 0 0 3px var(--acid), 6px 12px 32px rgba(0,0,0,0.45);
+  }
+
+  .side .annotations-container .pin-polaroid {
+    max-width: 155px;
+  }
+
+  .pin-sticky .note-hdr {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 9px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 4px;
+    display: block;
+    font-weight: 700;
+  }
+
+  /* ═══ Hover Instruction Tooltip ═══ */
+  .hover-hint {
+    text-align: center;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .06em;
+    color: #5a4d40;
+    margin-top: 10px;
+    padding: 6px 16px;
+  }
+  .hover-hint .hint-icon {
+    display: inline-block;
+    animation: hintBounce 1.5s ease-in-out infinite;
+  }
+  @keyframes hintBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+
   @media (max-width: 780px) {
     .body-wrap { padding: 50px 22px 30px; }
     .body-wrap p { font-size: 18px; }
     .figgrid { grid-template-columns: 1fr; }
     .stats { grid-template-columns: 1fr; }
     .stats .stat { border-right: 0; border-bottom: 1px solid var(--ink); }
-    .side { padding: 30px 24px; }
-    .comparator { height: 460px; }
+    .side { padding: 24px 20px 20px; }
+    .side.now { clip-path: inset(0 0 0 50%) !important; }
+    .side .lyric-container { position: relative !important; top: auto !important; bottom: auto !important; left: auto !important; width: 100% !important; max-width: 90% !important; margin-left: 0 !important; font-size: 18px !important; margin-top: 24px; overflow-y: visible !important; }
+    .side .lyric-block { max-width: 90% !important; margin-left: 0 !important; font-size: 16.5px; }
+    .comparator { height: auto; min-height: 520px; }
     .compare { padding: 0 22px; }
     .hero { padding: 30px 22px 40px; }
     .eq-strip { padding: 0 22px; }
+    .pin-polaroid, .pin-sticky, .sticky-note, .margin-comment, .conn-thread, .bracket-note, .annotations-container { display: none !important; }
   }
 </style>
 </head>
@@ -587,7 +1381,7 @@
   <a class="home" href="../index.html">← Index</a>
   <a class="home wm" href="../index.html" aria-label="Popular Times">
     <img src="../assets/popular-times-logo.png" alt="Popular Times" />
-    <span class="motto">“The news people want to read.”</span>
+    <span class="motto">“The entertainment everyone needs.”</span>
   </a>
   <span class="right">Nº 01 · Music</span>
 </header>
@@ -638,20 +1432,154 @@
         <div class="era">Era · 1990</div>
         <div class="song">U Can't Touch This — MC Hammer</div>
       </div>
-      <p class="lyric">"My, my, my music hits me so hard<br/>Makes me say, 'Oh my Lord, thank you'<br/>For blessing me with a mind to rhyme and two<br/>Hyped feet"</p>
+      
+      <!-- Spotify-style Lyrics (Left panel) -->
+      <div class="lyric-container">
+        <span class="lyric-line" data-note="pin-hammer-flow">"My, my, my music hits me so hard</span>
+        <span class="lyric-line" data-note="pin-hammer-gospel">Makes me say, 'Oh my Lord, thank you'</span>
+        <span class="lyric-line" data-note="pin-hammer-flow">For blessing me with a mind to rhyme and two</span>
+        <span class="lyric-line" data-note="pin-hammer-pants">Hyped feet</span>
+        <span class="lyric-line">That's good when you know you're down</span>
+        <span class="lyric-line">A super dope homeboy from the Oaktown</span>
+        <span class="lyric-line">And I'm known as such</span>
+        <span class="lyric-line" data-note="pin-hammer-freak">And this is a beat, uh, you can't touch"</span>
+        <span class="lyric-line verse-break"></span>
+        <span class="lyric-line" data-note="pin-hammer-freak">"I go crazy when I hear a bass</span>
+        <span class="lyric-line">A fly beat findin' its way in your face</span>
+        <span class="lyric-line" data-note="pin-hammer-pants">So start sweat it, y'all, show 'em what you got</span>
+        <span class="lyric-line" data-note="pin-hammer-pop">Because you know you can't touch this"</span>
+      </div>
+      
+      <!-- Scattered Annotations (MC Hammer) -->
+      <div class="annotations-container">
+        <div class="pinboard-item pin-polaroid" id="pin-hammer-cover" style="transform: rotate(-4deg); margin-left: 8%;">
+          <span class="pushpin"></span>
+          <div class="img-holder" style="background-image: url('../assets/mc_hammer_cover.jpg');"></div>
+          <div class="caption">U Can't Touch This</div>
+        </div>
+
+        <div class="pinboard-item pin-sticky yellow" id="pin-hammer-pants" data-lyrics="pin-hammer-pants" style="transform: rotate(3deg); margin-left: 35%; width: 155px;">
+          <span class="pushpin yellow"></span>
+          <span class="note-hdr">THE DANCE EFFECT</span>
+          The iconic "Hammer Pants" weren't just a style statement—they accentuated his rapid footwork, making the slides look like magic.
+        </div>
+
+        <div class="pinboard-item pin-sticky yellow" id="pin-hammer-gospel" data-lyrics="pin-hammer-gospel" style="transform: rotate(-2deg); margin-left: 5%; width: 150px;">
+          <span class="pushpin"></span>
+          <span class="note-hdr">GOSPEL ROOTS</span>
+          Hammer actually started in gospel rap (under MC Hammer Christian ministry) before adapting his upbeat energetic street style.
+        </div>
+
+        <div class="pinboard-item pin-sticky yellow" id="pin-hammer-freak" data-lyrics="pin-hammer-freak" style="transform: rotate(5deg); margin-left: 22%; width: 145px;">
+          <span class="pushpin yellow"></span>
+          <span class="note-hdr">RICK JAMES SAMPLE</span>
+          Rick James' 'Super Freak' bassline sampled directly for that signature 1990 hook!
+        </div>
+
+        <div class="pinboard-item pin-sticky yellow" id="pin-hammer-flow" data-lyrics="pin-hammer-flow" style="transform: rotate(-5deg); margin-left: 40%; width: 155px;">
+          <span class="pushpin"></span>
+          <span class="note-hdr">MIND TO RHYME</span>
+          Often dismissed as simple pop, Hammer's rapid internal rhymes on this track actually showcase genuine technical lyricism.
+        </div>
+
+        <div class="pinboard-item pin-sticky yellow" id="pin-hammer-pop" data-lyrics="pin-hammer-pop" style="transform: rotate(2deg); margin-left: 10%; width: 160px;">
+          <span class="pushpin yellow"></span>
+          <span class="note-hdr">POP CROSSOVER</span>
+          Certified Diamond with over 10 million copies sold. MC Hammer proved hip-hop could dominate mainstream pop charts globally.
+        </div>
+
+        <div class="pinboard-item pin-sticky yellow" id="pin-hammer-fashion" data-lyrics="pin-hammer-fashion" style="transform: rotate(-3deg); margin-left: 30%; width: 150px;">
+          <span class="pushpin"></span>
+          <span class="note-hdr">FASHION ICON</span>
+          Harem pants, metallic gold fabrics, and oversized silhouettes. Hammer's style became a defining visual trademark of the early 90s crossover era.
+        </div>
+      </div>
+      
       <div class="foot"><span>Tone · Playful</span><span>BPM · 133</span></div>
     </div>
+    
     <div class="side now" id="sideNow">
       <div>
         <div class="era">Era · 2025</div>
         <div class="song">RATHER LIE — Playboi Carti &amp; The Weeknd</div>
       </div>
-      <p class="lyric">"I'd rather lie than to lose you, girl<br/>I'd rather lie than confuse you, girl<br/>Truth is, we lapped them, they want us gone<br/>Truth is, they can't handle me at the top"</p>
+      <!-- Right-aligned title visible in neutral 50/50 view -->
+      <div class="header-right">
+        <div class="era">Era · 2025</div>
+        <div class="song">RATHER LIE — Playboi Carti &amp; The Weeknd</div>
+      </div>
+      
+      <!-- Spotify-style Lyrics (Right panel) -->
+      <div class="lyric-container">
+        <span class="lyric-line" data-note="pin-carti-romance">"I'd rather lie than to lose you, girl</span>
+        <span class="lyric-line" data-note="pin-carti-romance">I'd rather lie than confuse you, girl</span>
+        <span class="lyric-line" data-note="pin-carti-lap">Truth is, we lapped them, they want us gone</span>
+        <span class="lyric-line" data-note="pin-carti-top">Truth is, they can't handle me at the top"</span>
+        <span class="lyric-line verse-break"></span>
+        <span class="lyric-line">"I'm in the hills, yeah, the sky is dark</span>
+        <span class="lyric-line">We light it up, let the engine start</span>
+        <span class="lyric-line" data-note="pin-carti-vocal">You want the real me, but which one's that?</span>
+        <span class="lyric-line" data-note="pin-carti-vocal">I'm switching voices, I'm never back"</span>
+        <span class="lyric-line verse-break"></span>
+        <span class="lyric-line" data-note="pin-carti-aesthetic">"Ethereal vibes, yeah, the sound is deep</span>
+        <span class="lyric-line">I run the streets while they fast asleep</span>
+        <span class="lyric-line" data-note="pin-carti-lap">We lapped them once and we'll do it again</span>
+        <span class="lyric-line">No new friends, yeah, we play to win"</span>
+      </div>
+      
+      <!-- Scattered Annotations (Carti) -->
+      <div class="annotations-container">
+        <div class="pinboard-item pin-polaroid" id="pin-carti-cover" style="transform: rotate(3deg); margin-left: 15%;">
+          <span class="pushpin blue"></span>
+          <div class="img-holder" style="background-image: url('../assets/carti_cover.png');"></div>
+          <div class="caption">I AM MUSIC</div>
+        </div>
+
+        <div class="pinboard-item pin-sticky cyan" id="pin-carti-top" data-lyrics="pin-carti-top" style="transform: rotate(-4deg); margin-left: 38%; width: 150px;">
+          <span class="pushpin"></span>
+          <span class="note-hdr">AT THE TOP</span>
+          Cements his transition from underground trendsetter to global chart-topping curator of the cultural zeitgeist.
+        </div>
+
+        <div class="pinboard-item pin-sticky cyan" id="pin-carti-romance" data-lyrics="pin-carti-romance" style="transform: rotate(5deg); margin-left: 5%; width: 155px;">
+          <span class="pushpin"></span>
+          <span class="note-hdr">TOXIC ROMANCE</span>
+          Classic Carti trope: mixing vulnerability with hyper-toxic relationship dynamics over haunting, ethereal synths.
+        </div>
+
+        <div class="pinboard-item pin-sticky cyan" id="pin-carti-lap" data-lyrics="pin-carti-lap" style="transform: rotate(-2deg); margin-left: 28%; width: 150px;">
+          <span class="pushpin blue"></span>
+          <span class="note-hdr">LAPPED THEM</span>
+          A racing metaphor: Carti and The Weeknd boast about outpacing peers, running literal circles around the competition.
+        </div>
+
+        <div class="pinboard-item pin-sticky cyan" id="pin-carti-weeknd" data-lyrics="pin-carti-weeknd" style="transform: rotate(4deg); margin-left: 40%; width: 155px;">
+          <span class="pushpin blue"></span>
+          <span class="note-hdr">COLLABORATION</span>
+          The Weeknd's smooth atmospheric falsetto meets Carti's deep, raspy "deep voice" timbre to create an incredible vocal contrast.
+        </div>
+
+        <div class="pinboard-item pin-sticky cyan" id="pin-carti-vocal" data-lyrics="pin-carti-vocal" style="transform: rotate(-5deg); margin-left: 8%; width: 148px;">
+          <span class="pushpin"></span>
+          <span class="note-hdr">VOCAL SHIFT</span>
+          Transitioning to a low, raspy 'deep voice' register. A dramatic sonic evolution from his signature high-pitched baby voice era.
+        </div>
+
+        <div class="pinboard-item pin-sticky cyan" id="pin-carti-aesthetic" data-lyrics="pin-carti-aesthetic" style="transform: rotate(3deg); margin-left: 32%; width: 152px;">
+          <span class="pushpin blue"></span>
+          <span class="note-hdr">PUNK MINIMALISM</span>
+          Fusing dark gothic fashion, heavy industrial synths, and raw repetition. Carti bridges the energy of punk with modern trap music.
+        </div>
+      </div>
+      
       <div class="foot"><span>Tone · Conflicted</span><span>BPM · 84</span></div>
     </div>
     <div class="handle" id="handle"></div>
   </div>
-  <div class="instr">↔ Drag the divider · then ←  /  → now</div>
+  <div class="instr-wrap">
+    <div class="instr">↔ DRAG the handle · CLICK any lyric to see its analysis</div>
+  </div>
+  <div class="hover-hint">Click a lyric line to slide over &amp; reveal its linked note · Click a note to enlarge it</div>
 </section>
 
 <main class="body-wrap" style="padding-top:60px;">
@@ -660,24 +1588,56 @@
 
 <!-- IMAGE PLACEHOLDERS -->
 <section class="figgrid">
-  <figure class="fig">
-    <img src="../assets/eminem_vma.jpg" alt="Eminem performing Houdini at the 2024 VMAs" />
-    <div class="stripe"></div>
-    <div class="marker">Plate 01</div>
-    <div class="label"><b>Performance still</b>Eminem performing Houdini at the 2024 VMA's in New York</div>
-  </figure>
-  <figure class="fig acid">
-    <img src="../assets/carti_cover.png" alt="Playboi Carti I AM MUSIC Album Cover" />
+  <div class="still-card">
+    <div class="still-frame">
+      <img src="../assets/eminem_vma.jpg" alt="Eminem performing Houdini at the 2024 VMAs" />
+      <div class="stripe"></div>
+      <div class="marker">Plate 01</div>
+    </div>
+    <div class="desc-card">
+      <b>Performance still</b>Eminem performing Houdini at the 2024 VMA's in New York
+    </div>
+  </div>
+  <a class="vinyl-link" href="https://open.spotify.com/album/2IRxVVqbSbqHJo8Zx50LYn" target="_blank" rel="noopener noreferrer">
+  <figure class="fig vinyl acid">
+    <div class="vinyl-wrapper">
+      <div class="vinyl-backdrop"></div>
+      <div class="vinyl-disc">
+        <img class="vinyl-disc-label" src="../assets/carti_cover.png" alt="Playboi Carti I AM MUSIC Album Cover" />
+      </div>
+      <div class="vinyl-cover">
+        <img src="../assets/carti_cover.png" alt="Playboi Carti I AM MUSIC Album Cover" />
+      </div>
+      <div class="vinyl-listen">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+        Listen on Spotify ↗
+      </div>
+    </div>
     <div class="stripe"></div>
     <div class="marker">Plate 02</div>
     <div class="label"><b>Album cover</b>Playboi Carti's album, "I AM MUSIC" which displays the song "RATHER LIE", collaborating with The Weeknd</div>
   </figure>
-  <figure class="fig red">
-    <img src="../assets/mc_hammer_cover.jpg" alt="MC Hammer Please Hammer Don't Hurt 'Em Album Cover" />
+  </a>
+  <a class="vinyl-link" href="https://open.spotify.com/album/4JWJsnrHdf9S3MajxQ7g1Y" target="_blank" rel="noopener noreferrer">
+  <figure class="fig vinyl red">
+    <div class="vinyl-wrapper">
+      <div class="vinyl-backdrop"></div>
+      <div class="vinyl-disc">
+        <img class="vinyl-disc-label" src="../assets/mc_hammer_cover.jpg" alt="MC Hammer Please Hammer Don't Hurt 'Em Album Cover" />
+      </div>
+      <div class="vinyl-cover">
+        <img src="../assets/mc_hammer_cover.jpg" alt="MC Hammer Please Hammer Don't Hurt 'Em Album Cover" />
+      </div>
+      <div class="vinyl-listen">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+        Listen on Spotify ↗
+      </div>
+    </div>
     <div class="stripe"></div>
     <div class="marker">Plate 03</div>
     <div class="label"><b>Album cover</b>MC HAMMER's album cover of the hit song "U Can't Touch This" with well over 1.5 billion combined streams across all major platforms</div>
   </figure>
+  </a>
 </section>
 
 <!-- VIDEO EMBEDS -->
@@ -755,7 +1715,7 @@
     eq.appendChild(b);
   }
 
-  // ----- comparator drag -----
+  // ----- comparator drag (ONLY from handle) -----
   (() => {
     const wrap = document.getElementById('comparator');
     const now  = document.getElementById('sideNow');
@@ -763,7 +1723,27 @@
     let drag = false;
     let pos = 50; // percent
 
-    const set = (px) => {
+    // Smoothly animate to a target position
+    const animateTo = (target) => {
+      target = Math.max(4, Math.min(96, target));
+      const start = pos;
+      const diff = target - start;
+      const duration = 400;
+      const startTime = performance.now();
+      const step = (now) => {
+        const elapsed = now - startTime;
+        const t = Math.min(elapsed / duration, 1);
+        // ease-out cubic
+        const ease = 1 - Math.pow(1 - t, 3);
+        pos = start + diff * ease;
+        handle.style.left = pos + '%';
+        document.getElementById('sideNow').style.clipPath = `inset(0 0 0 ${pos}%)`;
+        if (t < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
+
+    const setImmediate = (px) => {
       const r = wrap.getBoundingClientRect();
       let x = ((px - r.left) / r.width) * 100;
       x = Math.max(4, Math.min(96, x));
@@ -771,17 +1751,19 @@
       handle.style.left = x + '%';
       now.style.clipPath = `inset(0 0 0 ${x}%)`;
     };
-    set(wrap.getBoundingClientRect().left + wrap.getBoundingClientRect().width * 0.5);
+    setImmediate(wrap.getBoundingClientRect().left + wrap.getBoundingClientRect().width * 0.5);
 
-    const start = (e) => { drag = true; document.body.style.userSelect = 'none'; };
+    const start = () => { drag = true; document.body.style.userSelect = 'none'; };
     const end   = () => { drag = false; document.body.style.userSelect = ''; };
     const move  = (e) => {
       if (!drag) return;
       const x = e.touches ? e.touches[0].clientX : e.clientX;
-      set(x);
+      setImmediate(x);
     };
-    wrap.addEventListener('mousedown', (e) => { start(e); set(e.clientX); });
-    wrap.addEventListener('touchstart', (e) => { start(e); set(e.touches[0].clientX); }, {passive:true});
+
+    // Only the handle starts a drag — not the entire comparator
+    handle.addEventListener('mousedown', (e) => { e.stopPropagation(); start(); setImmediate(e.clientX); });
+    handle.addEventListener('touchstart', (e) => { e.stopPropagation(); start(); setImmediate(e.touches[0].clientX); }, {passive:true});
     document.addEventListener('mouseup', end);
     document.addEventListener('touchend', end);
     document.addEventListener('mousemove', move);
@@ -790,8 +1772,136 @@
     // arrow keys
     wrap.tabIndex = 0;
     wrap.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowLeft')  { pos = Math.max(4,  pos - 4); handle.style.left = pos + '%'; now.style.clipPath = `inset(0 0 0 ${pos}%)`; }
-      if (e.key === 'ArrowRight') { pos = Math.min(96, pos + 4); handle.style.left = pos + '%'; now.style.clipPath = `inset(0 0 0 ${pos}%)`; }
+      if (e.key === 'ArrowLeft')  { animateTo(pos - 8); }
+      if (e.key === 'ArrowRight') { animateTo(pos + 8); }
+    });
+
+    // Expose animateTo globally so lyric click handlers can use it
+    window._sliderAnimateTo = animateTo;
+    window._sliderGetPos = () => pos;
+  })();
+
+  // ═══ Lyric ↔ Sticky Note Interactive Highlighting ═══
+  (() => {
+    let activeNote = null; // track currently enlarged note
+
+    // Clear active note
+    const clearActive = () => {
+      if (activeNote) {
+        activeNote.classList.remove('note-active');
+        activeNote = null;
+      }
+    };
+
+    // 1. Hovering a lyric line → highlight its linked note
+    document.querySelectorAll('.lyric-line[data-note]').forEach(line => {
+      line.addEventListener('mouseenter', () => {
+        const noteId = line.getAttribute('data-note');
+        const note = document.getElementById(noteId);
+        if (note) {
+          note.classList.add('note-highlighted');
+        }
+        document.querySelectorAll(`.lyric-line[data-note="${noteId}"]`).forEach(sib => {
+          sib.classList.add('lyric-highlighted');
+        });
+      });
+      line.addEventListener('mouseleave', () => {
+        const noteId = line.getAttribute('data-note');
+        const note = document.getElementById(noteId);
+        if (note) note.classList.remove('note-highlighted');
+        document.querySelectorAll(`.lyric-line[data-note="${noteId}"]`).forEach(sib => {
+          sib.classList.remove('lyric-highlighted');
+        });
+      });
+
+      // CLICK on lyric → slide divider to reveal annotations + enlarge note
+      line.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const noteId = line.getAttribute('data-note');
+        const note = document.getElementById(noteId);
+        // Determine which side this lyric is on
+        const side = line.closest('.side');
+        const isThen = side && side.classList.contains('then');
+
+        // Slide the divider so both lyrics and their annotations are fully visible
+        if (isThen) {
+          // "Then" lyrics are on the left; annotations are on the right half of "then" side
+          // Slide fully right so the entire 'then' side is revealed
+          window._sliderAnimateTo(96);
+        } else {
+          // "Now" lyrics are on the right; annotations are on the left half of "now" side
+          // Slide fully left so the entire 'now' side is revealed
+          window._sliderAnimateTo(4);
+        }
+
+        // Enlarge the linked note
+        clearActive();
+        if (note) {
+          note.classList.add('note-active');
+          note.classList.add('note-highlighted');
+          activeNote = note;
+          // Scroll the note into view
+          setTimeout(() => {
+            note.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }, 450); // wait for slider animation
+        }
+
+        // Also highlight the lyrics
+        document.querySelectorAll(`.lyric-line[data-note="${noteId}"]`).forEach(sib => {
+          sib.classList.add('lyric-highlighted');
+        });
+      });
+    });
+
+    // 2. Hovering a sticky note → highlight its linked lyrics
+    document.querySelectorAll('.pinboard-item[data-lyrics]').forEach(note => {
+      note.addEventListener('mouseenter', () => {
+        const linkId = note.getAttribute('data-lyrics');
+        document.querySelectorAll(`.lyric-line[data-note="${linkId}"]`).forEach(line => {
+          line.classList.add('lyric-highlighted');
+        });
+        note.classList.add('note-highlighted');
+      });
+      note.addEventListener('mouseleave', () => {
+        const linkId = note.getAttribute('data-lyrics');
+        document.querySelectorAll(`.lyric-line[data-note="${linkId}"]`).forEach(line => {
+          line.classList.remove('lyric-highlighted');
+        });
+        note.classList.remove('note-highlighted');
+      });
+
+      // CLICK on note → toggle enlarge
+      note.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (activeNote === note) {
+          // Toggle off
+          clearActive();
+        } else {
+          clearActive();
+          note.classList.add('note-active');
+          activeNote = note;
+
+          // Scroll its linked lyrics into view
+          const linkId = note.getAttribute('data-lyrics');
+          if (linkId) {
+            const lines = document.querySelectorAll(`.lyric-line[data-note="${linkId}"]`);
+            if (lines.length > 0) {
+              lines[0].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              lines.forEach(l => l.classList.add('lyric-highlighted'));
+            }
+          }
+        }
+      });
+    });
+
+    // Click anywhere else in comparator to clear active states
+    document.getElementById('comparator').addEventListener('click', (e) => {
+      // Only clear if clicking on the background, not on a lyric or note
+      if (!e.target.closest('.lyric-line[data-note]') && !e.target.closest('.pinboard-item')) {
+        clearActive();
+        document.querySelectorAll('.lyric-highlighted').forEach(el => el.classList.remove('lyric-highlighted'));
+        document.querySelectorAll('.note-highlighted').forEach(el => el.classList.remove('note-highlighted'));
+      }
     });
   })();
 </script>

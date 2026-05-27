@@ -488,32 +488,60 @@
   ============================================================ */
   .caption-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 32px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
     max-width: 1100px;
     margin: 60px auto;
     padding: 0 36px;
   }
-  .still {
-    background: var(--ink);
-    color: var(--paper);
-    aspect-ratio: 16/9; /* Widescreen cinematic aspect ratio! */
+  .still-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-self: start;
+    position: relative;
+  }
+  .still-frame {
     position: relative;
     overflow: hidden;
-    border: 1px solid var(--ink);
+    border: 3px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink);
+    background: var(--ink);
   }
-  .still.ha, .still.nl {
-    grid-column: span 2; /* Spans across both columns to make the video and panoramic segments very large! */
+  .poster-frame {
+    aspect-ratio: 2/3; /* Perfectly fits the frames of the movie posters */
   }
-  .still .crop {
-    position: absolute; inset: 0;
+  .video-frame {
+    aspect-ratio: 16/9; /* Perfect aspect ratio for widescreen video frames */
   }
-  .still .crop::after {
+  /* Ambient blurred background layer */
+  .poster-frame::before {
+    content: "";
+    position: absolute;
+    inset: -20px;
+    background-image: inherit;
+    background-size: cover;
+    background-position: center;
+    filter: blur(18px) brightness(0.4);
+    z-index: 1;
+  }
+  .still-frame .crop {
+    position: absolute;
+    inset: 0;
+    background-image: inherit;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 2;
+  }
+  .still-frame .crop::after {
     content: "";
     position: absolute; inset: 0;
-    background: repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 3px);
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,.05) 0 1px, transparent 1px 3px);
+    z-index: 3;
+    pointer-events: none;
   }
-  .still .ph-tag {
+  .still-frame .ph-tag {
     position: absolute; top: 12px; left: 12px;
     font-family: "JetBrains Mono", monospace;
     font-size: 10px;
@@ -522,27 +550,38 @@
     background: var(--paper);
     color: var(--ink);
     padding: 4px 8px;
+    z-index: 4;
+    border: 1px solid var(--ink);
   }
-  .still figcaption {
-    position: absolute; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(0deg, rgba(0,0,0,.85), transparent);
-    padding: 22px 16px 14px;
-    font-family: "Newsreader", serif;
-    font-style: italic;
-    font-size: 15px;
-    line-height: 1.4;
-    color: var(--paper);
+  .desc-card {
+    margin-top: 16px;
+    background: var(--cream);
+    color: var(--ink);
+    border: 3px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink);
+    padding: 14px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    line-height: 1.45;
   }
-  .still .crop {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
+  .desc-card b {
+    display: block;
+    font-family: "Archivo Black", sans-serif;
+    font-size: 12px;
+    margin-bottom: 6px;
+    color: var(--coral);
   }
-  .still.bc .crop { background-image: url("../assets/breakfast_club_poster.jpg"); }
-  .still.ptn .crop { background-image: url("../assets/planes_trains_poster.jpg"); }
-  .still.ha .crop { background-image: url("../assets/home_alone_poster.jpg"); }
-  .still.nl .crop { background-image: url("../assets/vacation_poster.jpg"); }
+  .still-card.bc .still-frame { background-image: url("../assets/breakfast_club_poster.jpg"); }
+  .still-card.ptn .still-frame { background-image: url("../assets/planes_trains_poster.jpg"); }
+  .still-card.nl .still-frame { background-image: url("../assets/vacation_poster.jpg"); }
+  .still-card.ha {
+    grid-column: span 3;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+  }
   .still.ha .play {
     position: absolute; left: 50%; top: 50%;
     transform: translate(-50%, -50%);
@@ -637,7 +676,7 @@
     .body-wrap { padding: 50px 22px 30px; }
     .body-wrap p { font-size: 18px; }
     .caption-grid { grid-template-columns: 1fr; padding: 0 22px; }
-    .still.ha, .still.nl { grid-column: span 1; }
+    .still-card.ha { grid-column: span 1; }
     .hero { padding: 60px 22px 40px; }
     .filmography .head h2 { font-size: 36px; }
     .reel { padding: 30px 22px 50px; }
@@ -653,7 +692,7 @@
   <a href="../index.html">← Index</a>
   <a class="wm" href="../index.html" aria-label="Popular Times">
     <img src="../assets/popular-times-logo.png" alt="Popular Times" />
-    <span class="motto">“The news people want to read.”</span>
+    <span class="motto">“The entertainment everyone needs.”</span>
   </a>
   <span class="right">Nº 02 · Cinema</span>
 </header>
@@ -846,25 +885,45 @@
 
 <!-- CAPTIONED STILLS -->
 <section class="caption-grid">
-  <figure class="still bc">
-    <div class="crop"></div>
-    <span class="ph-tag">Plate · 01</span>
-    <figcaption>Frame taken from The Breakfast Club depicting the teens in Sunday school.</figcaption>
-  </figure>
-  <figure class="still ptn">
-    <div class="crop"></div>
-    <span class="ph-tag">Plate · 02</span>
-    <figcaption>Movie poster for Planes, Trains, and Automobiles.</figcaption>
-  </figure>
-  <figure class="still ha" id="still-ha">
-    <iframe style="position:absolute; inset:0; width:100%; height:100%; border:0; z-index:1;" src="https://www.youtube.com/embed/S7OWoc-j8qQ?autoplay=1&mute=1" title="Home Alone Trailer" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    <span class="ph-tag" style="z-index:2; pointer-events:none;">Plate · 03</span>
-  </figure>
-  <figure class="still nl">
-    <div class="crop"></div>
-    <span class="ph-tag">Plate · 04</span>
-    <figcaption>National Lampoon's Vacation movie depicting the Griswolds' classic cross-country road trip.</figcaption>
-  </figure>
+  <div class="still-card bc">
+    <div class="still-frame poster-frame">
+      <div class="crop"></div>
+      <span class="ph-tag">Plate · 01</span>
+    </div>
+    <div class="desc-card">
+      <b>Detention Still</b>Frame taken from The Breakfast Club depicting the teens in Sunday school.
+    </div>
+  </div>
+  
+  <div class="still-card ptn">
+    <div class="still-frame poster-frame">
+      <div class="crop"></div>
+      <span class="ph-tag">Plate · 02</span>
+    </div>
+    <div class="desc-card">
+      <b>Travel Classic</b>Movie poster for Planes, Trains, and Automobiles.
+    </div>
+  </div>
+  
+  <div class="still-card nl">
+    <div class="still-frame poster-frame">
+      <div class="crop"></div>
+      <span class="ph-tag">Plate · 04</span>
+    </div>
+    <div class="desc-card">
+      <b>Road Trip</b>National Lampoon's Vacation movie depicting the Griswolds' classic cross-country road trip.
+    </div>
+  </div>
+
+  <div class="still-card ha">
+    <div class="still-frame video-frame" id="still-ha">
+      <iframe style="position:absolute; inset:0; width:100%; height:100%; border:0; z-index:1;" src="https://www.youtube.com/embed/S7OWoc-j8qQ?autoplay=1&mute=1" title="Home Alone Trailer" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <span class="ph-tag" style="z-index:2; pointer-events:none;">Plate · 03</span>
+    </div>
+    <div class="desc-card">
+      <b>Holiday Tradition</b>Kevin McCallister defends his home in the legendary holiday blockbuster Home Alone.
+    </div>
+  </div>
 </section>
 
 <script>
