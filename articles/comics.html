@@ -374,7 +374,7 @@
     margin: 0 auto 26px;
     text-wrap: pretty;
   }
-  .body-wrap p:first-of-type::first-letter {
+  .body-wrap > p:first-of-type::first-letter {
     font-family: "Bungee", sans-serif;
     float: left;
     font-size: 90px;
@@ -648,16 +648,279 @@
     margin-bottom: 36px;
   }
   .mcu-card {
+    perspective: 1000px;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    overflow: visible;
+    position: relative;
+  }
+  .mcu-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+  .mcu-card:hover .mcu-card-inner {
+    transform: rotateY(180deg);
+  }
+  .mcu-card-front, .mcu-card-back {
+    width: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .mcu-card-front {
+    position: relative;
+    height: auto;
     background: var(--paper);
     border: 3px solid var(--ink);
+    box-shadow: 4px 4px 0 var(--ink);
+    display: flex;
+    flex-direction: column;
+    z-index: 2;
     overflow: hidden;
-    position: relative;
-    display: flex; flex-direction: column;
-    transition: transform .2s ease, box-shadow .2s;
   }
-  .mcu-card:hover {
-    transform: translate(-3px, -3px);
-    box-shadow: 6px 6px 0 var(--ink);
+  .mcu-card-back {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    transform: rotateY(180deg);
+    background: #14110f;
+    border: 3px solid var(--ink);
+    box-shadow: -4px 4px 0 var(--ink);
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  /* Pin board styles on the back of MCU cards */
+  .pinboard {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: radial-gradient(circle, #2a221f 0%, #171210 100%);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 14px;
+    box-sizing: border-box;
+  }
+  .pinboard::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: 
+      radial-gradient(rgba(255,255,255,0.03) 1px, transparent 0),
+      radial-gradient(rgba(255,255,255,0.02) 1px, transparent 0);
+    background-size: 8px 8px;
+    background-position: 0 0, 4px 4px;
+    pointer-events: none;
+  }
+  .pinboard-photo {
+    position: absolute;
+    background: #fff;
+    border: 5px solid #fff;
+    border-bottom: 18px solid #fff;
+    box-shadow: 2px 4px 10px rgba(0,0,0,0.55);
+    z-index: 1;
+    transition: transform 0.3s ease, z-index 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .pinboard-photo:hover {
+    transform: scale(1.22) rotate(0deg) !important;
+    z-index: 25 !important;
+  }
+  .pinboard-photo img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .pinboard-photo.p1 {
+    top: 15px;
+    left: 6%;
+    width: 60%;
+    transform: rotate(-6deg);
+  }
+  .pinboard-photo.p2 {
+    top: 130px;
+    right: 6%;
+    width: 58%;
+    transform: rotate(8deg);
+  }
+  .pinboard-photo.p3 {
+    top: 240px;
+    left: 10%;
+    width: 62%;
+    transform: rotate(-5deg);
+  }
+  .pinboard-photo.p4 {
+    top: 330px;
+    right: 8%;
+    width: 56%;
+    transform: rotate(7deg);
+  }
+
+  /* Pinboard Video Polaroid Style */
+  .pinboard-video {
+    width: 58%;
+    aspect-ratio: 9/16;
+    background: #000;
+    border: 5px solid #fff;
+    border-bottom: 18px solid #fff;
+    box-shadow: 2px 4px 10px rgba(0,0,0,0.5);
+    position: absolute;
+    top: 100px;
+    right: 6%;
+    z-index: 10;
+    overflow: hidden;
+    transition: transform 0.3s ease, z-index 0.2s ease;
+  }
+  .pinboard-video:hover {
+    transform: scale(1.18) rotate(0deg) !important;
+    z-index: 22 !important;
+  }
+  .pinboard-video iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+  /* Red YouTube-style Corner Shortcut Badge */
+  .video-shortcut-link {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #ff0000;
+    color: #fff;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 700;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    z-index: 12;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .video-shortcut-link:hover {
+    transform: scale(1.15);
+    background: #cc0000;
+  }
+  .pinboard-note {
+    background: #ffe89a;
+    color: #222;
+    padding: 8px 10px;
+    font-family: "Space Grotesk", sans-serif;
+    box-shadow: 2px 4px 10px rgba(0,0,0,0.4);
+    width: 90%;
+    position: absolute;
+    bottom: 55px;
+    left: 5%;
+    z-index: 15;
+    border-left: 2px solid rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, z-index 0.2s ease;
+    box-sizing: border-box;
+  }
+  .pinboard-note:hover {
+    transform: scale(1.08) rotate(1deg) !important;
+    z-index: 25 !important;
+  }
+  .pinboard-note:hover {
+    transform: scale(1.05) rotate(1deg) !important;
+    z-index: 10;
+  }
+  .pinboard-note.cyan {
+    background: #b5f2ea;
+  }
+  .pinboard-note.pink {
+    background: #ffc2d1;
+  }
+  .pinboard-note ul {
+    margin: 0;
+    padding: 0 0 0 14px;
+    list-style-type: disc;
+    text-align: left;
+  }
+  .pinboard-note li {
+    margin: 0 0 5px 0;
+    font-size: 12px;
+    font-family: "Newsreader", serif;
+    font-style: italic;
+    line-height: 1.35;
+    color: #111;
+  }
+  .pinboard-note li:last-child {
+    margin-bottom: 0;
+  }
+  .pinboard-note::after {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 10px;
+    background: radial-gradient(circle at 35% 35%, #ff5252 0%, #c62828 60%, #5f0909 100%);
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  }
+
+  /* Interactive instructions styling */
+  .mcu-instructions {
+    text-align: center;
+    max-width: 720px;
+    margin: 25px auto 15px;
+    background: var(--paper);
+    border: 4px dashed var(--red);
+    padding: 20px 24px;
+    border-radius: 6px;
+    box-shadow: 8px 8px 0 var(--ink);
+  }
+  .mcu-instructions .inst-pill {
+    display: inline-block;
+    background: var(--red);
+    color: var(--paper);
+    font-family: "Archivo Black", sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .mcu-instructions .inst-text {
+    margin: 0;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 16.5px;
+    color: var(--ink);
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  /* Polaroid Video Play Caption */
+  .video-caption-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    text-align: center;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 5px 0;
+    z-index: 11;
+    pointer-events: none;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
   }
   .mcu-card .poster {
     aspect-ratio: 2/3;
@@ -1126,7 +1389,7 @@
   <a href="../index.html">← Index</a>
   <a class="wm" href="../index.html" aria-label="Popular Times">
     <img src="../assets/popular-times-logo.png" alt="Popular Times" />
-    <span class="motto">“Escaping the boring structured reality into a world of entertainment.”</span>
+    <span class="motto">“The entertainment everyone needs.”</span>
   </a>
   <span class="right">Nº 03 · Pulp · Screen</span>
 </header>
@@ -1318,6 +1581,12 @@
 
 <main class="body-wrap" style="padding-top:60px;">
   <p>By choosing to remove the cartoonish elements, Nolan placed Batman in a gritty world with real world dilemmas which mirrored the revolution that The Dark Knight Returns and Watchmen had brought to comic books. Now superhero movies have become a multi billion dollar industry that dominates film and cultures around us. We can see this through the Marvel Cinematic Universe, known for movies such as Iron Man and Avengers Endgame, consisting of interconnected movies and tv shows spanning 18 years and made over $31 billion at the global box office.</p>
+
+  <!-- Interactive Instructions -->
+  <div class="mcu-instructions">
+    <div class="inst-pill">Interactive Segment</div>
+    <p class="inst-text">Hover your cursor over any movie poster below to flip it and explore its cultural impact! On the back, <strong>hover your cursor over any photo to enlarge it</strong> and examine details.</p>
+  </div>
 </main>
 
 <!-- MCU MOMENTS SHOWCASE -->
@@ -1327,45 +1596,218 @@
 
     <div class="mcu-grid">
       <article class="mcu-card iron">
-        <div class="poster"><span class="badge">Phase 1</span><span class="yr">2008</span></div>
-        <div class="meta">
-          <p class="ttl">Iron Man</p>
-          <p class="blurb">Robert Downey Jr.'s comeback opens the doors. A post-credits Nick Fury tease, and the whole interconnected idea is set in motion.</p>
+        <div class="mcu-card-inner">
+          <div class="mcu-card-front">
+            <div class="poster"><span class="badge">Phase 1</span><span class="yr">2008</span></div>
+            <div class="meta">
+              <p class="ttl">Iron Man</p>
+              <p class="blurb">Robert Downey Jr.'s comeback opens the doors. A post-credits Nick Fury tease, and the whole interconnected idea is set in motion.</p>
+            </div>
+          </div>
+          <div class="mcu-card-back">
+            <div class="pinboard">
+              <div class="pinboard-photo p1" style="top: 15px; left: 5%; width: 55%; transform: rotate(-5deg);">
+                <img src="../assets/mcu-impact/iron-man/image.png" alt="Iron Man cosplay and crowd engagement">
+              </div>
+              <div class="pinboard-photo p2" style="top: 145px; right: 5%; width: 58%; transform: rotate(6deg);">
+                <img src="../assets/mcu-impact/iron-man/image%20copy.png" alt="Robert Downey Jr. at a public appearance">
+              </div>
+              <div class="pinboard-photo p3" style="top: 255px; left: 10%; width: 54%; transform: rotate(-4deg);">
+                <img src="../assets/mcu-impact/iron-man/image%20copy%202.png" alt="Young fans dressed in costume">
+              </div>
+              <div class="pinboard-note yellow" style="transform: rotate(3deg);">
+                <ul class="note-bullets">
+                  <li>Brought comic books to a massive mainstream audience.</li>
+                  <li>Helped turn San Diego Comic-Con into a huge pop culture event.</li>
+                  <li>Made Robert Downey Jr. one of the biggest stars in the world.</li>
+                  <li>Launched a giant worldwide cosplay culture for fans.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </article>
+
       <article class="mcu-card avg">
-        <div class="poster"><span class="badge">Phase 1 Finale</span><span class="yr">2012</span></div>
-        <div class="meta">
-          <p class="ttl">The Avengers</p>
-          <p class="blurb">The first team-up. Proves the connected-universe gamble pays. Studios spend the next decade trying to replicate the trick.</p>
+        <div class="mcu-card-inner">
+          <div class="mcu-card-front">
+            <div class="poster"><span class="badge">Phase 1 Finale</span><span class="yr">2012</span></div>
+            <div class="meta">
+              <p class="ttl">The Avengers</p>
+              <p class="blurb">The first team-up. Proves the connected-universe gamble pays. Studios spend the next decade trying to replicate the trick.</p>
+            </div>
+          </div>
+          <div class="mcu-card-back">
+            <div class="pinboard">
+              <div class="pinboard-photo p1" style="top: 15px; left: 6%; width: 54%; transform: rotate(-6deg);">
+                <img src="../assets/mcu-impact/the-avengers/image.png" alt="Premiere crowds queuing outside multiplexes">
+              </div>
+              <div class="pinboard-photo p2" style="top: 105px; right: 5%; width: 50%; transform: rotate(7deg);">
+                <img src="../assets/mcu-impact/the-avengers/image%20copy.png" alt="Historical souvenir movie poster">
+              </div>
+              <div class="pinboard-photo p3" style="top: 215px; left: 8%; width: 52%; transform: rotate(-4deg);">
+                <img src="../assets/mcu-impact/the-avengers/image%20copy%202.png" alt="Crowd gathered for convention highlights">
+              </div>
+              <div class="pinboard-photo p4" style="top: 315px; right: 6%; width: 56%; transform: rotate(6deg);">
+                <img src="../assets/mcu-impact/the-avengers/image%20copy%203.png" alt="Promotional events and fans at premiere">
+              </div>
+              <div class="pinboard-note cyan" style="transform: rotate(-4deg);">
+                <ul class="note-bullets">
+                  <li>Made over $1.5 billion at the global box office.</li>
+                  <li>Showed studios how to build successful interconnected movie universes.</li>
+                  <li>Created massive hype for big superhero crossover films.</li>
+                  <li>Inspired years of midnight premiere queues and sold-out theaters.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </article>
+
       <article class="mcu-card bp">
-        <div class="poster"><span class="badge">Cultural Milestone</span><span class="yr">2018</span></div>
-        <div class="meta">
-          <p class="ttl">Black Panther</p>
-          <p class="blurb">A cultural phenomenon. The first Marvel film to win Academy Awards. Wakanda enters the lexicon.</p>
+        <div class="mcu-card-inner">
+          <div class="mcu-card-front">
+            <div class="poster"><span class="badge">Cultural Milestone</span><span class="yr">2018</span></div>
+            <div class="meta">
+              <p class="ttl">Black Panther</p>
+              <p class="blurb">A cultural phenomenon. The first Marvel film to win Academy Awards. Wakanda enters the lexicon.</p>
+            </div>
+          </div>
+          <div class="mcu-card-back">
+            <div class="pinboard">
+              <div class="pinboard-photo p1" style="top: 15px; left: 6%; width: 55%; transform: rotate(-5deg);">
+                <img src="../assets/mcu-impact/black-panther/image.png" alt="Promotional cultural display">
+              </div>
+              <div class="pinboard-photo p2" style="top: 110px; right: 5%; width: 56%; transform: rotate(8deg);">
+                <img src="../assets/mcu-impact/black-panther/image%20copy.png" alt="Cast and crew at the historical premiere">
+              </div>
+              <div class="pinboard-photo p3" style="top: 210px; left: 8%; width: 58%; transform: rotate(-6deg);">
+                <img src="../assets/mcu-impact/black-panther/image%20copy%202.png" alt="Spectator celebration and cultural impact events">
+              </div>
+              <div class="pinboard-photo p4" style="top: 310px; right: 6%; width: 52%; transform: rotate(5deg);">
+                <img src="../assets/mcu-impact/black-panther/image%20copy%203.png" alt="Academic panels and community discussions">
+              </div>
+              <div class="pinboard-note pink" style="transform: rotate(4deg);">
+                <ul class="note-bullets">
+                  <li>Broke records as a massive cultural milestone for representation.</li>
+                  <li>Popularized Afrofuturism in mainstream fashion and music.</li>
+                  <li>Achieved the first-ever Best Picture Oscar nomination for a Marvel movie.</li>
+                  <li>Made over $1.3 billion and sparked a huge sense of global pride.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </article>
+
       <article class="mcu-card iw">
-        <div class="poster"><span class="badge">The Snap</span><span class="yr">2018</span></div>
-        <div class="meta">
-          <p class="ttl">Avengers: Infinity War</p>
-          <p class="blurb">A villain wins. The cliffhanger heard around the world. A year of fan theories follows.</p>
+        <div class="mcu-card-inner">
+          <div class="mcu-card-front">
+            <div class="poster"><span class="badge">The Snap</span><span class="yr">2018</span></div>
+            <div class="meta">
+              <p class="ttl">Avengers: Infinity War</p>
+              <p class="blurb">A villain wins. The cliffhanger heard around the world. A year of fan theories follows.</p>
+            </div>
+          </div>
+          <div class="mcu-card-back">
+            <div class="pinboard">
+              <div class="pinboard-photo p1" style="top: 15px; left: 8%; width: 52%; transform: rotate(-6deg);">
+                <img src="../assets/mcu-impact/infinity-war/image.png" alt="Shocked fans during the climax scene">
+              </div>
+              <div class="pinboard-photo p2" style="top: 150px; right: 5%; width: 60%; transform: rotate(8deg);">
+                <img src="../assets/mcu-impact/infinity-war/image%20copy.png" alt="Crowd reaction in front of the screen">
+              </div>
+              <div class="pinboard-photo p3" style="top: 275px; left: 6%; width: 62%; transform: rotate(-5deg);">
+                <img src="../assets/mcu-impact/infinity-war/image%20copy%202.png" alt="Fan theory boards and online discussions">
+              </div>
+              <div class="pinboard-note yellow" style="transform: rotate(-3deg);">
+                <ul class="note-bullets">
+                  <li>Shocked fans worldwide by letting the villain win at the end.</li>
+                  <li>Created a massive year-long conversation filled with fan theories.</li>
+                  <li>Had one of the biggest opening weekends in film history.</li>
+                  <li>Made $2 billion and left theater audiences in complete silence.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </article>
+
       <article class="mcu-card end">
-        <div class="poster"><span class="badge">Highest Grossing</span><span class="yr">2019</span></div>
-        <div class="meta">
-          <p class="ttl">Avengers: Endgame</p>
-          <p class="blurb">Briefly the highest-grossing film of all time. Eleven years of setups paid off in three hours.</p>
+        <div class="mcu-card-inner">
+          <div class="mcu-card-front">
+            <div class="poster"><span class="badge">Highest Grossing</span><span class="yr">2019</span></div>
+            <div class="meta">
+              <p class="ttl">Avengers: Endgame</p>
+              <p class="blurb">Briefly the highest-grossing film of all time. Eleven years of setups paid off in three hours.</p>
+            </div>
+          </div>
+          <div class="mcu-card-back">
+            <div class="pinboard">
+              <div class="pinboard-photo p1" style="top: 15px; left: 6%; width: 55%; transform: rotate(-5deg);">
+                <img src="../assets/mcu-impact/endgame/image.png" alt="Packed premiere theaters cheering">
+              </div>
+              <div class="pinboard-photo p2" style="top: 110px; right: 5%; width: 56%; transform: rotate(6deg);">
+                <img src="../assets/mcu-impact/endgame/image%20copy.png" alt="Record breaking box office queues">
+              </div>
+              <div class="pinboard-photo p3" style="top: 210px; left: 8%; width: 58%; transform: rotate(-7deg);">
+                <img src="../assets/mcu-impact/endgame/image%20copy%202.png" alt="Commemorative fan souvenirs">
+              </div>
+              <div class="pinboard-photo p4" style="top: 310px; right: 6%; width: 52%; transform: rotate(5deg);">
+                <img src="../assets/mcu-impact/endgame/image%20copy%203.png" alt="Theater display structures and setups">
+              </div>
+              <div class="pinboard-note cyan" style="transform: rotate(3deg);">
+                <ul class="note-bullets">
+                  <li>Became one of the highest-grossing movies of all time at $2.79 billion.</li>
+                  <li>Turned movie theaters into massive celebrations with cheering fans.</li>
+                  <li>Wrapped up 11 years and 22 movies of storytelling.</li>
+                  <li>Broke all-time ticket sales records on its opening weekend.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </article>
+
       <article class="mcu-card nwh">
-        <div class="poster"><span class="badge">Multiverse</span><span class="yr">2021</span></div>
-        <div class="meta">
-          <p class="ttl">Spider-Man: No Way Home</p>
-          <p class="blurb">Three generations of Spider-Men on one screen. Pandemic-era release that pulled audiences back to theaters.</p>
+        <div class="mcu-card-inner">
+          <div class="mcu-card-front">
+            <div class="poster"><span class="badge">Multiverse</span><span class="yr">2021</span></div>
+            <div class="meta">
+              <p class="ttl">Spider-Man: No Way Home</p>
+              <p class="blurb">Three generations of Spider-Men on one screen. Pandemic-era release that pulled audiences back to theaters.</p>
+            </div>
+          </div>
+          <div class="mcu-card-back">
+            <div class="pinboard">
+              <div class="pinboard-photo p1" style="top: 15px; left: 6%; width: 54%; transform: rotate(-5deg);">
+                <img src="../assets/mcu-impact/spider-man/image.png" alt="Iconic three-generations pointing meme reference">
+              </div>
+              
+              <!-- Clickable vertical video framed beautifully like a polaroid -->
+              <div class="pinboard-video" style="top: 90px; right: 5%; width: 58%; transform: rotate(5deg); z-index: 10;">
+                <iframe src="https://www.youtube.com/embed/6fTiYjI-lpo?modestbranding=1&rel=0" 
+                        allow="encrypted-media" 
+                        allowfullscreen>
+                </iframe>
+                <div class="video-caption-label">🎥 Click to play video</div>
+                <a href="https://www.youtube.com/shorts/6fTiYjI-lpo" target="_blank" class="video-shortcut-link" title="Open on YouTube">↗</a>
+              </div>
+              
+              <div class="pinboard-photo p3" style="top: 260px; left: 8%; width: 52%; transform: rotate(-4deg);">
+                <img src="../assets/mcu-impact/spider-man/image%20copy.png" alt="Spider-Man fan gathering and cosplay lines">
+              </div>
+              
+              <div class="pinboard-note pink" style="transform: rotate(-4deg);">
+                <ul class="note-bullets">
+                  <li>Brought three generations of Spider-Man fans together.</li>
+                  <li>Single-handedly saved movie theaters after the pandemic shutdowns.</li>
+                  <li>Made over $1.9 billion without even releasing in China.</li>
+                  <li>Created countless pointing Spidey memes all over the internet.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </article>
     </div>
